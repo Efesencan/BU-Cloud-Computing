@@ -89,9 +89,7 @@ Below is a description of the system components that are building blocks of the 
 
 * Tenant-UI: project and marketplace interface 
 
-* Project Space: virtual space for tenants (tenant ui, state db, sc-db).  These are basically VMs provisioned on top of the cloud in a project owned by the tenant. These VMs are used to handle the tenants own requests. 
-
-![image alt text](image_0.png)
+* Project Space: virtual space for tenants (tenant ui, state db, sc-db).  These are basically VMs provisioned on top of the cloud in a project owned by the tenant. These VMs are used to handle the tenants own
 
 **Figure 1: MOC-UI architecture.  Items that are blue are the responsibility of this project.  Green items are**** ****part of the larger OCX project, and are not the responsibility of this project.**
 
