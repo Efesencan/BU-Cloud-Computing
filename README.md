@@ -1,5 +1,5 @@
 # ChRIS Enviroment Interaction
-** **
+
 
 ## 1. Vision and Goals Of The Project:
 
@@ -62,7 +62,6 @@ Minimum acceptance criteria is having an interface showing the details of the co
 ## 6. Release Planning
 
 ### Release 1 (by week 5): 
-* Finish user stories
 * Finished setting up development environment
 * Finish reading ChRIS documentation
 
