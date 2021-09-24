@@ -42,8 +42,6 @@ Increase/Decrease the parameters if desired.
 * The back end should be able to feed information to the front end via an API on whether the defined environment was sufficient to run a plugin or pipeline (a series of plugins).
 # Not Guaranteed:
 
-* A good looking front end;
-
 * Checking local computing resources for a list of computing nodes (iterative design);
 
 * Designing algorithms to create different computing resources allocation plans (e.g. Best Performance Plan and Cost Effective Plan);
@@ -76,20 +74,28 @@ Minimum acceptance criteria is having an interface showing the details of the co
 ### Release 1 (by week 5): 
 * Finished setting up development environment
 * Finish reading ChRIS documentation
+* Figure out what specific service of the ChRIS project is responsible for configuration of containers and how they interact with it.
+* Start / continue exploring React JS
 
 ### Release 2 (by week 7): 
-* Figure out what specific service of the ChRIS project is responsible for configuration of containers and how they interact with it.
+* Understand the ChRIS system and devise a solution to “discover” the specs of container that user intends to run their work on (check the plugin’s requirements)
+* Start writing basic API that interacts with the app’s plugin requirements
 
 ### Release 3 (by week 9): 
-* Find a way for ChRIS system to “discover” the specs of container that user intends to run their work on (check the plugin’s requirements)
+* Develop API that determines whether the current environment space is sufficient to run the desired pipeline
+* Start developing GUI to show and choose the specs.
 
 ### Release 4 (by week 11): 
-* Develop a basic API for communicating user’s “plug-ins” requirement to the container scheduler
+* Develop a basic API for relaying/reporting the possible mismatch of plug-in specifications’ requirement and user’s working environment
+* Keep working/improving on the UI part
 
 ### Release 5 (by week 13): 
-* Develop a basic API for relaying/reporting the possible mismatch of plug-in specifications’ requirement and user’s working environment
+* Develop an API that can assign the optimal work space to the application under certain cost functions.
+* Keep working/improving on the UI part
 
 ### Final Release (by week 15):
-* Develop front end for user to see and interact with the environment information
+* Deploy and release the product.
+* Prepare the final presentation.
+
 
 
