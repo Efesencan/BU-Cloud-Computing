@@ -1,4 +1,4 @@
-# BU-Cloud-Computing
+# ChRIS Enviroment Interaction
 ** **
 
 ## 1. Vision and Goals Of The Project:
