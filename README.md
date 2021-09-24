@@ -5,13 +5,12 @@
 
 ## 1. Vision and Goals Of The Project:
 
-MOC-UI will be the front-end UI for end-users (customers) of the Massachusetts Open Cloud ([MOC](http://www.bu.edu/hic/initiatives/massachusetts-open-cloud/)). High-Level Goals of MOC-UI include:
+ChRIS (ChRIS Research Integration Service) ([MOC](http://chrisproject.org/)) is an active open source project, originally developed for analysis of medical imaging using High Performance Computers. However, it has pivoted to a more general and easy to use front end for doctors and other researchers to perform other computationally intensive medical related analyses with the help of cloud services. 
 
-* Providing a simple, straightforward user experience for non-expert users
+Plugins for ChRIS are written in Python with environment variables like number of GPUs, CPU threads, or amount of RAM baked into the code that the developer writes. Our goal for this project is to:
+ * Develop a simple way for the end user to view (and change if necessary) the environment variables from the front end, bypassing the need for understanding and editing the code.
 
-* Providing a user interface that allows users to access multiple, potentially distrusting providers offering possibly competing services
-
-* Enabling a marketplace to show the high- (Hadoop Service, PaaS, Appliances) and low- (VMs, Storage, Computer, Networking, etc.) level customizable offerings of multiple providers
+* Enable users to determine whether the remote environment satisfies the space of the environmental requirements of the pipeline.
 
 ## 2. Users/Personas Of The Project
 
