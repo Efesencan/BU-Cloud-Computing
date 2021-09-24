@@ -5,7 +5,7 @@
 
 ## 1. Vision and Goals Of The Project:
 
-ChRIS (ChRIS Research Integration Service) ([MOC](http://chrisproject.org/)) is an active open source project, originally developed for analysis of medical imaging using High Performance Computers. However, it has pivoted to a more general and easy to use front end for doctors and other researchers to perform other computationally intensive medical related analyses with the help of cloud services. 
+ChRIS (ChRIS Research Integration Service) ([ChRIS](http://chrisproject.org/)) is an active open source project, originally developed for analysis of medical imaging using High Performance Computers. However, it has pivoted to a more general and easy to use front end for doctors and other researchers to perform other computationally intensive medical related analyses with the help of cloud services. 
 
 Plugins for ChRIS are written in Python with environment variables like number of GPUs, CPU threads, or amount of RAM baked into the code that the developer writes. Our goal for this project is to:
  * Develop a simple way for the end user to view (and change if necessary) the environment variables from the front end, bypassing the need for understanding and editing the code.
