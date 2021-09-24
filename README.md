@@ -41,10 +41,15 @@ Increase/Decrease the parameters if desired.
 
 * The back end should be able to feed information to the front end via an API on whether the defined environment was sufficient to run a plugin or pipeline (a series of plugins).
 # Not Guaranteed:
+
 * A good looking front end;
+
 * Checking local computing resources for a list of computing nodes (iterative design);
+
 * Designing algorithms to create different computing resources allocation plans (e.g. Best Performance Plan and Cost Effective Plan);
+
 * Optimize allocation plans for different types of chipsets (e.g. Different resource allocation method for Intel, NVIDIA, or AMD);
+
 * Support for graphics card hot swap.
 
 
