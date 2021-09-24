@@ -14,17 +14,11 @@ Plugins for ChRIS are written in Python with environment variables like number o
 
 ## 2. Users/Personas Of The Project
 
-MOC-UI will be used by the end-users of MOC including researchers from BU, NU, MIT, HU and UMass, MGHPCC contributing companies, Commonwealth companies and government institutions, and paying users. 
+ChRIS is used by doctors and medical researchers who deal with medical imaging of the brain and enables them to generate detailed analytical reports from these images using machine learning and cloud support. It can also be generalized to perform other compute intensive tasks such as analyzing COVID data or deep learning tasks. This project targets:
 
-It targets only end-users and simple use cases for non-expert users.
+ * Medical researchers and doctors who will use ChRIS via Graphical User Interface
 
-It does not target:
-
-* MOC admin users, who will work against the command line.
-
-* Administrators of cloud services, who will continue to use existing tools like Horizon.
-
-* Advanced users with complex requirements who are expected to use command line interfaces. 
+* Admins of the ChRIS, who are going to test or use the pipeline for generating analytical reports
 
 ## 3. Scope and Features Of The Project:
 
