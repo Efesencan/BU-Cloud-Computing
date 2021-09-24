@@ -1,8 +1,6 @@
 # BU-Cloud-Computing
 ** **
 
-## MOC-UI Project Proposal
-
 ## 1. Vision and Goals Of The Project:
 
 ChRIS (ChRIS Research Integration Service) ([ChRIS](http://chrisproject.org/)) is an active open source project, originally developed for analysis of medical imaging using High Performance Computers. However, it has pivoted to a more general and easy to use front end for doctors and other researchers to perform other computationally intensive medical related analyses with the help of cloud services. 
