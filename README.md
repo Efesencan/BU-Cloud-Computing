@@ -22,39 +22,26 @@ ChRIS is used by doctors and medical researchers who deal with medical imaging o
 
 ## 3. Scope and Features Of The Project:
 
-MOC-UI 
+* By the end of this project, the users should be able to:
+    
+    * For a given plugin (a created/written app which is containerized), and for a compute environment in which the plugin is intended to run, check whether the resources are sufficient for the plugin’s requirements.
 
-* Presents a simple compelling interface for end-users
+    * Given a collection of plugins which is  represented with graphs in ChRIS UI, check whether all plugins can be executed in the selected compute environment.
 
     * Addition and management of users of the system. 
 
-    * User project creation and management.
+    * For a collection of plugins in a graph, and for a given cost function (i.e: “fastest”, “cheapest”), assign each plugin to the compute environment that satisfies the   requirements for that plugin
 
-        * Project add/edit/delete functionalities
+    * View the number of GPUs, CPU threads, or amount of RAM directly from the workflow creator within the ChRIS project front end.
+Increase/Decrease the parameters if desired.
 
-        * Addition/deletion/management of low-level resources (compute, storage, network…) to/from/of the project.
+    * Understand whether the space of the remote environment is sufficient or not to run the pipeline and generate analytical reports.
 
-            * Launching/suspending/stopping instances, accessing instances via a vnc console, adding instances to available networks.
+* The back end should access the plugins and the environmental requirements of the app and provide that information to the front end in a fast and efficient way.
 
-            * Managing storage, attaching/detaching storage to instances.
+* The API in the backend should be able to assign the plugins to the compute environment given the cost function in a most efficient way. 
 
-            * Managing networks.
-
-        * Addition/deletion/management of high-level resources (Hadoop, Spark, appliances…) to/from/of the project.
-
-* Ability to operate across multiple deployments (HU, NU, BU, ...), 
-
-* Exposes a complex marketplace of services to meet the goals of the MOC (e.g., more like Amazon's consumer marketplace). 
-
-* Allows multiple, potentially non-trusting providers to coexist
-
-    * Marketplace functionalities that lets selection/addition of different services/resources/appliances from different providers residing possibly in different deployments in the datacenter (e.g. storage from Harvard, compute from Northeastern) into a project. 
-
-* Security: Provides secure storage and processing of user credentials, service and project data 
-
-* Scalability: Can scale to large number of users, projects, and services 
-
-* Extensibility: Provides an extendable interface that allows third-party service interaction
+* The back end should be able to feed information to the front end via an API on whether the defined environment was sufficient to run a plugin or pipeline (a series of plugins).
 
 ## 4. Solution Concept
 
