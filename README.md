@@ -1,4 +1,4 @@
-"# BU-Cloud-Computing" 
+# BU-Cloud-Computing
 ** **
 
 ## MOC-UI Project Proposal
@@ -63,57 +63,24 @@ Minimum acceptance criteria is having an interface showing the details of the co
 
 ## 6. Release Planning
 
-Detailed user stories and plans are on the Trello board: https://trello.com/b/4EbylOXI/example-trello-board-for-moc-ui
+### Release 1 (by week 5): 
+* Finish user stories
+* Finished setting up development environment
+* Finish reading ChRIS documentation
 
-Release #1 (due by Week 5): 
+### Release 2 (by week 7): 
+* Figure out what specific service of the ChRIS project is responsible for configuration of containers and how they interact with it.
 
-User stories: User creation/addition, User login/logout
+### Release 3 (by week 9): 
+* Find a way for ChRIS system to “discover” the specs of container that user intends to run their work on (check the plugin’s requirements)
 
-User creation/addition: 
+### Release 4 (by week 11): 
+* Develop a basic API for communicating user’s “plug-ins” requirement to the container scheduler
 
-(OCX-Login) On the OCX-Login page, the user selects ‘Register’ and is sent to a registration page. 
+### Release 5 (by week 13): 
+* Develop a basic API for relaying/reporting the possible mismatch of plug-in specifications’ requirement and user’s working environment
 
-	
+### Final Release (by week 15):
+* Develop front end for user to see and interact with the environment information
 
-	(New User Registration) 
-
-After submitting basic information (e.g., email, password, username), the user is registered with the OCX-Authority and the user is sent to the Projects Page.
-
-User login/logout:
-
-(OCX-Login) User enters their credentials and selects ‘Login’
-
-(Projects Page) User views his list of projects plus project descriptions, selects a project space, and clicks enter, a Tenant-UI VM is spawned in the capacity of the selected project on users behalf and user is redirected to the spawned Tenant-UI.
-
-(Project Space) User lands on the Project Management page and clicks logout, his Tenant-UI VM is deallocated.
-
-Release #2 (due by Week 7): 
-
-Project creation/deletion:
-
-…
-
-Release #3 (due by Week 9): 
-
-Addition/modification/deletion of a VM into/in/from a Project:
-
-…
-
-Release #4 (due by Week 11):
-
-Console access to active VMs (due by: Week 10):
-
-…
-
-Release #5 (due by Week 13):
-
-Addition/usage/modification of extensible services such as Hadoop/Spark:
-
-(Project Management) The user decides to add a Service on project management page, selects ‘Marketplace’ tab, then user selects a Service (HPC, Hadoop, Protein Modeling, etc.), chooses from a list of possible configuration options (Size, Speed, Network) 
-
-(Project Management) User selects a Service 
-
-(Service Details) (Overlay) User selects manage service option, which opens Service Interface (e.g. Hadoop’s native interface)
-
-(Service Interface) User interacts with Service Interface (3rd party interface running in a panel)
 
