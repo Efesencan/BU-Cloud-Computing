@@ -1,4 +1,4 @@
-from AgeAtScan.app import AgeAtScan
+from ageatscan.app import AgeAtScan
 
 
 def main():
