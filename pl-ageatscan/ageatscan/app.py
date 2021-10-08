@@ -64,6 +64,7 @@ class AgeAtScan(ChrisApp):
         self.add_argument('-v', '--verbose',
                           dest='verbose',
                           help='Display CSV in stdout. File is not written to',
+                          default=False,
                           optional=True,
                           type=str
                           )

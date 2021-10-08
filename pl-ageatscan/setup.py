@@ -11,7 +11,7 @@ setup(
     long_description = readme,
     author           = 'Yanni Pang',
     author_email     = 'yanni@bu.edu',
-    url              = 'https://github.com/FNNDSC/pl-re-sub#readme',
+    url              = 'https://github.com/yannip1234/pl-ageatscan#readme',
     packages         = ['ageatscan'],
     install_requires = ['chrisapp', 'tqdm', 'pandas'],
     license          = 'MIT',
