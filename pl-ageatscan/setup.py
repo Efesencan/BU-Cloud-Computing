@@ -12,14 +12,14 @@ setup(
     author           = 'Yanni Pang',
     author_email     = 'yanni@bu.edu',
     url              = 'https://github.com/FNNDSC/pl-re-sub#readme',
-    packages         = ['AgeAtScan'],
+    packages         = ['ageatscan'],
     install_requires = ['chrisapp', 'tqdm', 'pandas'],
     license          = 'MIT',
     zip_safe         = False,
     python_requires  = '>=3.6',
     entry_points     = {
         'console_scripts': [
-            'AgeAtScan = AgeAtScan.__main__:main'
+            'ageatscan = ageatscan.__main__:main'
             ]
         }
 )
