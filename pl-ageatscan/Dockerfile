@@ -1,4 +1,4 @@
-FROM docker.io/library/pypy:3-7-slim-bullseye
+FROM python:3.9.1-slim-buster
 
 LABEL org.opencontainers.image.authors="FNNDSC <dev@babyMRI.org>" \
       org.opencontainers.image.title="ChRIS Age Calculation" \
