@@ -21,6 +21,8 @@ class AgeAtScan(ChrisApp):
     MIN_MEMORY_LIMIT = 200  # Override with memory MegaByte (MB) limit as int
     MIN_GPU_LIMIT = 0  # Override with the minimum number of GPUs as int
     MAX_GPU_LIMIT = 0  # Override with the maximum number of GPUs as int
+    
+    OUTPUT_META_DICT = {}
 
     def define_parameters(self):
         self.add_argument(
