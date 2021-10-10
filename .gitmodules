@@ -1,0 +1,3 @@
+[submodule "pl-ageatscan"]
+	path = pl-ageatscan
+	url = https://github.com/yannip1234/pl-ageatscan
