@@ -23,7 +23,7 @@ Plugins for ChRIS are mostly written in Python with operational variables like n
 
 This project targets:
 
- * Scientific researchers who will use ChRIS via a Graphical User Interface to easily perform cloud-based containerized computation.
+ * Doctors, Medical researchers, and scientific researchers who will use ChRIS via a Graphical User Interface to easily perform cloud-based containerized computation.
 
  * Admins of ChRIS, who are going to test or use the pipeline for generating analytical reports
  
@@ -34,7 +34,9 @@ This project targets:
 * Project Architecture:
     * ChRIS Project has 3 main components:
 
-        * ChRIS Backend for checking user plug-ins permission with ChRIS Store, passing input data into computing environment, and receiving results from the computing environment
+        * ChRIS Backend for passing input data into computing environment, and receiving results from the computing environment
+        
+        * ChRIS Store for storing the descriptor JSON representation of plugins which are then requested by the user in the front end and the backend sends a request to start an instance
 
         * Containerized Plug-ins managed by OpenShift
         
