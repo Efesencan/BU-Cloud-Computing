@@ -129,6 +129,7 @@ Minimum acceptance criteria is having an interface showing the details of the co
 
 ### Demos
 [Demo 1](https://www.youtube.com/watch?v=kBIDokPnwpA)
+[Demo 2](https://youtu.be/AWViu7jEWxQ)
 
 
 
