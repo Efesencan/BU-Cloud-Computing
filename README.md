@@ -15,9 +15,15 @@
 ChRIS (ChRIS Research Integration Service) ([ChRIS](http://chrisproject.org/)) is an active open source project, developed from inception as a platform to facilitate the execution of complex (research focused) compute operations by non technical users. It's genesis arose from a realization that considerable programs of value exist in the research world and the observation that most (if not all) of these programs are rarely used by anyone other than the original authors. ChRIS, at its heart, is a platform that attempts to cross this divide. It has currently grown into a container based scheduling system that uses various other container scheduler backends (such as kubernetes, docker swarm, and Red Hat OpenShift).
 
 Plugins for ChRIS are mostly written in Python with operational variables like number of GPUs, CPU threads, or amount of RAM baked into the code that the developer writes. Our goal for this project is to:
- * Develop a simple way for the end user to view the plug-in / pipeline’s operational variables from the front end.
+ * Develop a command line application for the end user to:
+   *  view the plug-in / pipeline’s operational variables/compute resources from the front end
+   *  optimize a pipeline for cost, or speed and report the correct compute resources required
+ 
 
 * Enable users to determine whether the remote environment satisfies the spec of the computational requirements of the computing pipeline requested by the users
+
+**Additional goals:**
+* Create a plugin for Banu Ahtam of the FNNDSC to calculate "subject age at time of scan" in a spreadsheet.
 
 ## 2. Users/Personas Of The Project
 
@@ -36,7 +42,7 @@ This project targets:
 
         * ChRIS Backend for passing input data into computing environment, and receiving results from the computing environment
         
-        * ChRIS Store for storing the descriptor JSON representation of plugins which are then requested by the user in the front end and the backend sends a request to start an instance
+        * ChRIS Store for storing the descriptor JSON representation of plugins which are then requested by the user in the front end. The backend sends a request to the plugin manager (p-man) which tells the computer resource to start an instance
 
         * Containerized Plug-ins managed by OpenShift
         
@@ -46,7 +52,7 @@ This project targets:
     
     * For a given plugin (a created/written app which is containerized), and for a compute environment in which the plugin is intended to run, check whether the resources are sufficient for the plugin’s requirements.
 
-    * Given a collection of plugins which is  represented with graphs in ChRIS UI, check whether all plugins can be executed in the selected compute environment.
+    * Given a collection of plugins which is represented with graphs in ChRIS UI, check whether all plugins can be executed in the selected compute environment.
 
     * For a collection of plugins in a graph, and for a given cost function (i.e: “fastest”, “cheapest”), assign each plugin to the compute environment that satisfies the   requirements for that plugin
 
@@ -54,11 +60,9 @@ This project targets:
 
     * Understand whether the space of the remote environment is sufficient or not to run the pipeline and generate analytical reports.
 
-* The backend should access the plugins and the environmental requirements of the app and provide that information to the front end in a fast and efficient way.
+* The command line application should be able compute environment given the cost or speed function. 
 
-* The backend should be able to assign the plugins to the compute environment given the cost function in a most efficient way. 
-
-* The backend should be able to feed information to the front end via an API on whether the defined environment was sufficient to run a plugin or pipeline (a series of plugins).
+* The backend should be able to feed via the REST API, the descriptor for any compute resource.
 
 # Not Guaranteed:
 
@@ -79,7 +83,12 @@ Global Architectural Structure:
 
 * User interface written by ReactJS framework to  display relevant information
 
-* Use Shell Script, Linux commands, Python,  or OpenCL to fetch the current computing machine’s hardware information and reallocate the cores for different computation plans
+* A Python command line application to fetch the current computing machine’s hardware information from CUBE's REST API that can report:
+  * Any given pipeline's plugins
+  * Details of all compute resources, such as GPU, CPU, Cost, Memory
+  * A check for whether the pipeline's compute resources are compatible
+  * A way to optimize any pipeline for cost, or speed
+  * Return all information as JSON for future implementation
 
 * Pass post-execution information from backend to the frontend
 
@@ -89,7 +98,7 @@ Design Implication and Discussion:
 
 * ReactJS is also the frontend development environment of the ChRIS project. This makes our front end more integratable to the main dashboard;
 
-* Python and PyFlask is also intensively used in the ChRIS project backend. By using the same PyFlask library, it is easier to maintain code.
+* Python and Django is also intensively used in the ChRIS project backend. By using the same Django library, it is easier to maintain code.
 
 * Shell Script is a powerful tool in the Linux environment. Hardware information and processing allocations could be done by correctly using shell script.
 
@@ -114,16 +123,16 @@ Minimum acceptance criteria is having an interface showing the details of the co
 * Start writing basic API that interacts with the app’s plugin requirements
 
 ### Release 3 (by week 9): 
-* Develop API that determines whether the current environment space is sufficient to run the desired pipeline
-* Start developing GUI to show and choose the specs.
+* Draft a mockup/user interaction "dialogue" of the command line application to be built
+* Start developing command line application that determines whether the current compute resources are sufficient/optimized to run the desired pipeline
 
 ### Release 4 (by week 11): 
-* Develop a basic API for relaying/reporting the possible mismatch of plug-in specifications’ requirement and user’s working environment
-* Keep working/improving on the UI part
+* Finish developing a basic command line application to get a pipeline's pluging and their computer resources
+* Develop cost / speed functions for integration
 
 ### Release 5 (by week 13): 
-* Develop an API that can assign the optimal work space to the application under certain cost functions.
-* Keep working/improving on the UI part
+* Finish the command line application by integrating cost/speed optimization
+* Testing and prep for release
 
 ### Final Release (by week 15):
 * Deploy and release the product.
