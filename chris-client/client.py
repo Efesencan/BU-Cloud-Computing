@@ -248,8 +248,34 @@ class ChrisClient:
 
         if len(dict_plugin) == 0:
             raise PluginNotFoundError()
-        print(json.dumps(dict_plugin, sort_keys=True, indent=4))
+        #print(json.dumps(dict_plugin, sort_keys=True, indent=4))
         return dict_plugin
+
+    def match_compute_env(self, plugin_name):
+        plugin_details = self.get_plugin_details(plugin_name = plugin_name)
+        compute_addr = plugin_details[plugin_name]['compute_resources']
+        min_cpu_limit = plugin_details[plugin_name]['min_cpu_limit']
+        min_gpu_limit = plugin_details[plugin_name]['min_gpu_limit']
+        min_memory_limit = plugin_details[plugin_name]['min_memory_limit']
+        min_number_of_workers = plugin_details[plugin_name]['min_number_of_workers']
+
+        cmp_cpu = 1
+        cmp_gpu = 1
+        cmp_mem = 1
+        cmp_worker = 1
+
+        match_dict = {}
+
+        if cmp_cpu >= min_cpu_limit and cmp_gpu >= min_gpu_limit and cmp_mem >= min_memory_limit and cmp_worker >= min_number_of_workers:
+            match_dict['matching'] = {'fit': True}
+        else:
+            match_dict['matching'] = {'fit': False}
+
+        print(json.dumps(match_dict, sort_keys=True, indent=4))
+        return match_dict
+
+
+
 
 
 

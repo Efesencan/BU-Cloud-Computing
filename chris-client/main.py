@@ -11,4 +11,5 @@ client = ChrisClient(
     )
 #cr = client.list_compute_resources()
 #cr = client.get_compute_resources_details()
-pl = client.get_plugin_details()
+#pl = client.get_plugin_details(plugin_id = 2)
+match = client.match_compute_env('pl-simpledsapp')
