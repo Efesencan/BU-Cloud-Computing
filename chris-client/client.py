@@ -233,24 +233,21 @@ class ChrisClient:
         data = res.json()
         if plugin_id is None and plugin_name is None:
             print(json.dumps(data, sort_keys=True, indent=4))
-
+            return data
         plugins = data['results']
         dict_plugin = {}
         if plugin_id is not None:
             for plugin in plugins:
                 if plugin['id'] == plugin_id:
                     dict_plugin[plugin['name']] = plugin
-            if len(dict_plugin) == 0:
-                raise PluginNotFoundError()
 
         elif plugin_name is not None:
             for plugin in plugins:
                 if plugin['name'] == plugin_name:
                     dict_plugin[plugin['name']] = plugin
 
-            if len(dict_plugin) == 0:
-                raise PluginNotFoundError()
-
+        if len(dict_plugin) == 0:
+            raise PluginNotFoundError()
         print(json.dumps(dict_plugin, sort_keys=True, indent=4))
         return dict_plugin
 

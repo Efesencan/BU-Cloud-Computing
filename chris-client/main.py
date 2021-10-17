@@ -11,4 +11,4 @@ client = ChrisClient(
     )
 #cr = client.list_compute_resources()
 #cr = client.get_compute_resources_details()
-pl = client.get_plugin_details(plugin_id = None, plugin_name = "pl-s3retrieve")
+pl = client.get_plugin_details()
