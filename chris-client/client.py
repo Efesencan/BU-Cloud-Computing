@@ -203,7 +203,7 @@ class ChrisClient:
             raise PipelineNotFoundError(name)
         return search.pop()
 
-    def list_compute_resoures(self) -> Dict[str, list]:
+    def list_compute_resources(self) -> Dict[str, list]:
         res = self._s.get(self.addr_compute_resources)
         res.raise_for_status()
         data = res.json()
@@ -215,4 +215,45 @@ class ChrisClient:
         dict_cr["compute_resources"] = list_cr
         print(json.dumps(dict_cr, sort_keys=True, indent=4))
         return dict_cr
+
+    def get_compute_resources_details(self) -> Dict[str, Dict]:
+        res = self._s.get(self.addr_compute_resources)
+        res.raise_for_status()
+        data = res.json()
+        compute_resources = data['results']
+        dict_cr = {}
+        for resource in compute_resources:
+            dict_cr[resource['name']] = resource
+        print(json.dumps(dict_cr, sort_keys=True, indent=4))
+        return dict_cr
+
+    def get_plugin_details(self, plugin_id = None, plugin_name = None):
+        res = self._s.get(self.search_addr_plugins)
+        res.raise_for_status()
+        data = res.json()
+        if plugin_id is None and plugin_name is None:
+            print(json.dumps(data, sort_keys=True, indent=4))
+
+        plugins = data['results']
+        dict_plugin = {}
+        if plugin_id is not None:
+            for plugin in plugins:
+                if plugin['id'] == plugin_id:
+                    dict_plugin[plugin['name']] = plugin
+            if len(dict_plugin) == 0:
+                raise PluginNotFoundError()
+
+        elif plugin_name is not None:
+            for plugin in plugins:
+                if plugin['name'] == plugin_name:
+                    dict_plugin[plugin['name']] = plugin
+
+            if len(dict_plugin) == 0:
+                raise PluginNotFoundError()
+
+        print(json.dumps(dict_plugin, sort_keys=True, indent=4))
+        return dict_plugin
+
+
+
 

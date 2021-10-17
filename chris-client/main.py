@@ -5,9 +5,10 @@ import os
 
 
 client = ChrisClient(
-        address='http://10.0.4.213:8000/api/v1/',
+        address='http://localhost:8000/api/v1/',
         username='chris',
         password='chris1234'
     )
-cr = client.list_compute_resoures()
-
+#cr = client.list_compute_resources()
+#cr = client.get_compute_resources_details()
+pl = client.get_plugin_details(plugin_id = None, plugin_name = "pl-s3retrieve")
