@@ -227,6 +227,18 @@ class ChrisClient:
         print(json.dumps(dict_cr, sort_keys=True, indent=4))
         return dict_cr
 
+    def get_plugin_resources(self) -> Dict[str, list]:
+        res = self._s.get(self.search_addr_plugins)
+        res.raise_for_status()
+        data = res.json()
+        plugins = data['results']
+        plugin_names = {'plugins': []}
+        for plugin in plugins:
+            plugin_name = plugin['name']
+            plugin_names['plugins'].append(plugin_name)
+        print(json.dumps(plugin_names, sort_keys=True, indent=4))
+        return plugin_names
+
     def get_plugin_details(self, plugin_id = None, plugin_name = None):
         res = self._s.get(self.search_addr_plugins)
         res.raise_for_status()
@@ -259,10 +271,10 @@ class ChrisClient:
         min_memory_limit = plugin_details[plugin_name]['min_memory_limit']
         min_number_of_workers = plugin_details[plugin_name]['min_number_of_workers']
 
-        cmp_cpu = 1
-        cmp_gpu = 1
-        cmp_mem = 1
-        cmp_worker = 1
+        cmp_cpu = 1000000
+        cmp_gpu = 10000000
+        cmp_mem = 100000000
+        cmp_worker = 10000000
 
         match_dict = {}
 
