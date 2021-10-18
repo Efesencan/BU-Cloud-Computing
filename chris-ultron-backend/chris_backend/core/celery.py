@@ -1,0 +1,63 @@
+
+import os
+from logging.config import dictConfig
+from django.conf import settings
+
+from celery import Celery
+from celery.signals import setup_logging
+
+# set the default Django settings module for the 'celery' program
+os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'config.settings.local')
+
+app = Celery('core')
+
+# using a string here means the worker doesn't have to serialize
+# the configuration object to child processes
+# - namespace='CELERY' means all celery-related configuration keys
+#   should have a `CELERY_` prefix
+app.config_from_object('django.conf:settings', namespace='CELERY')
+
+# load task modules from all registered Django app configs.
+app.autodiscover_tasks()
+
+# define the the queue for each task
+# the default 'celery' queue is exclusively used for the automated tests
+task_routes = {
+    'plugininstances.tasks.sum': {'queue': 'main1'},
+    'plugininstances.tasks.run_plugin_instance': {'queue': 'main1'},
+    'plugininstances.tasks.check_plugin_instance_exec_status': {'queue': 'main2'},
+    'plugininstances.tasks.cancel_plugin_instance': {'queue': 'main2'},
+    'plugininstances.tasks.schedule_waiting_plugin_instances':
+        {'queue': 'periodic'},
+    'plugininstances.tasks.check_started_plugin_instances_exec_status':
+        {'queue': 'periodic'},
+    'plugininstances.tasks.cancel_waiting_plugin_instances':
+        {'queue': 'periodic'},
+}
+app.conf.update(task_routes=task_routes)
+
+# setup periodic tasks
+app.conf.beat_schedule = {
+    'schedule-waiting-plugin-instances-every-45-seconds': {
+        'task': 'plugininstances.tasks.schedule_waiting_plugin_instances',
+        'schedule': 45.0,
+    },
+    'check-started-plugin-instances-exec-status-every-30-seconds': {
+        'task': 'plugininstances.tasks.check_started_plugin_instances_exec_status',
+        'schedule': 30.0,
+    },
+    'cancel-waiting-plugin-instances-every-30-seconds': {
+        'task': 'plugininstances.tasks.cancel_waiting_plugin_instances',
+        'schedule': 30.0,
+    },
+}
+
+# use logging settings in Django settings
+@setup_logging.connect
+def config_loggers(*args, **kwags):
+    dictConfig(settings.LOGGING)
+
+# example task that is passed info about itself
+@app.task(bind=True)
+def debug_task(self):
+    print('Request: {0!r}'.format(self.request))

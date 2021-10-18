@@ -1,0 +1,15 @@
+.dockerignore
+Dockerfile
+.gitignore
+.travis.yml
+.coverage
+.git
+LICENSE
+README.md
+utils
+docs
+htmlcov
+CHRIS_REMOTE_FS
+swarm/prod/secrets
+kubernetes/prod/base/secrets
+dc.out

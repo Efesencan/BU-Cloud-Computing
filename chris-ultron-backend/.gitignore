@@ -1,0 +1,15 @@
+*~
+*.DS_Store
+__pycache__
+*.pyc
+docs/build
+.coverage
+htmlcov
+.docker
+.idea
+CHRIS_REMOTE_FS/
+dc.out
+.vscode
+celerybeat.pid
+swarm/prod/secrets/
+kubernetes/prod/base/secrets/
