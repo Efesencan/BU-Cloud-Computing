@@ -15,7 +15,7 @@ class ComputeResourceSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = ComputeResource
         fields = ('url', 'id', 'creation_date', 'modification_date', 'name',
-                  'compute_url', 'description')
+                  'compute_url', 'description', 'cpus', 'gpus', 'cost_usd')
 
 
 class PluginMetaSerializer(serializers.HyperlinkedModelSerializer):
