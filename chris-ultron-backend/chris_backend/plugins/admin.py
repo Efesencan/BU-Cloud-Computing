@@ -314,7 +314,7 @@ class ComputeResourceAdminList(generics.ListCreateAPIView):
         """
         response = super(ComputeResourceAdminList, self).list(request, *args, **kwargs)
         # append write template
-        template_data = {'name': '', 'compute_url': '', 'description': ''}
+        template_data = {'name': '', 'compute_url': '', 'description': '', 'cpus': '', 'gpus': '', 'cost_usd': ''}
         return services.append_collection_template(response, template_data)
 
 
