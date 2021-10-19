@@ -85,7 +85,7 @@ class PluginManager(object):
         try:
             cr = ComputeResource.objects.get(name=name)
         except ComputeResource.DoesNotExist:
-            data = {'name': name, 'compute_url': url, 'description': description}
+            data = {'name': name, 'compute_url': url, 'description': description, 'cpus': cpus, 'gpus': gpus, 'cost_usd': cost_usd}
             compute_resource_serializer = ComputeResourceSerializer(data=data)
             compute_resource_serializer.is_valid(raise_exception=True)
             cr = compute_resource_serializer.save()
