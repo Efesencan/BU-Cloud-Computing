@@ -30,9 +30,9 @@ class ComputeResource(models.Model):
     name = models.CharField(max_length=100, unique=True)
     compute_url = models.URLField(max_length=300)
     description = models.CharField(max_length=600, blank=True)
-    cpus = models.IntegerField(blank=True)
-    gpus = models.IntegerField(blank=True)
-    cost_usd = models.FloatField(blank=True)
+    cpus = models.IntegerField(blank=True, default=0)
+    gpus = models.IntegerField(blank=True, default=0)
+    cost_usd = models.FloatField(blank=True, default=0.00)
 
     def __str__(self):
         return self.name
