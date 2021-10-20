@@ -267,10 +267,10 @@ class PluginManager(object):
         options = self.parser.parse_args(args)
         if options.subparser_name == 'add':
             self.add_compute_resource(options.computeresource, options.url,
-                                      options.description)
+                                      options.description, options.cpus, options.gpus, options.cost_usd)
         elif options.subparser_name == 'modify':
             self.modify_compute_resource(options.computeresource, options.name,
-                                         options.url, options.description)
+                                         options.url, options.description, options.cpus, options.gpus, options.cost_usd)
         elif options.subparser_name == 'register':
             if options.pluginurl:
                 self.register_plugin_by_url(options.pluginurl, options.computeresource,
