@@ -43,6 +43,13 @@ class PluginManager(object):
                                 help="compute resource's url")
         parser_add.add_argument('--description', default='',
                                 help="compute resource's description")
+        parser_add.add_argument('cpus', default='0',
+                                help="compute resource's url")
+        parser_add.add_argument('gpus',default='0',
+                                help="compute resource's url")
+        parser_add.add_argument('cost_usd', default='0.00',
+                                help="compute resource's description")
+
 
         # create the parser for the "modify" command
         parser_modify = subparsers.add_parser('modify',
@@ -54,6 +61,12 @@ class PluginManager(object):
                                 help="compute resource's new url")
         parser_modify.add_argument('--description', default='',
                                 help="compute resource's new description")
+        parser_modify.add_argument('--cpus',
+                                help="compute resource's new amount of cpus")
+        parser_modify.add_argument('--gpus',
+                                help="compute resource's new amount of gpus")
+        parser_modify.add_argument('--cost_usd',
+                                help="compute resource's new cost")
 
         # create parser for the "register" command
         parser_register = subparsers.add_parser(
@@ -77,7 +90,7 @@ class PluginManager(object):
 
         self.parser = parser
 
-    def add_compute_resource(self, name, url, description):
+    def add_compute_resource(self, name, url, description, cpus, gpus, cost_usd):
         """
         Add a new compute resource to the system.
         """
@@ -91,7 +104,7 @@ class PluginManager(object):
             cr = compute_resource_serializer.save()
         return cr
 
-    def modify_compute_resource(self, name, new_name, url, description):
+    def modify_compute_resource(self, name, new_name, url, description, cpus, gpus, cost_usd):
         """
         Modify an existing compute resource and add the current date as a new
         modification date.
@@ -105,6 +118,9 @@ class PluginManager(object):
             data['name'] = new_name if new_name else cr.name
             data['compute_url'] = url if url else cr.compute_url
             data['description'] = description if description else cr.description
+            data['cpus'] = description if description else cr.description
+            data['gpus'] = description if description else cr.description
+            data['cost_usd'] = description if description else cr.description
             compute_resource_serializer = ComputeResourceSerializer(cr, data=data)
             compute_resource_serializer.is_valid(raise_exception=True)
             cr = compute_resource_serializer.save()
