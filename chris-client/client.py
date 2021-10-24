@@ -271,14 +271,19 @@ class ChrisClient:
         min_memory_limit = plugin_details[plugin_name]['min_memory_limit']
         min_number_of_workers = plugin_details[plugin_name]['min_number_of_workers']
 
-        cmp_cpu = 1000000
-        cmp_gpu = 10000000
-        cmp_mem = 100000000
-        cmp_worker = 10000000
+        res = self._s.get(compute_addr)
+        res.raise_for_status()
+        data = res.json()
+        #print(json.dumps(data, sort_keys=True, indent=4))
+        compute_resources = data['results']
+        for resource in compute_resources:
+            cmp_cpu = resource['cpus']
+            cmp_gpu = resource['gpus']
+            cmp_cost = resource['cost_usd']
 
         match_dict = {}
 
-        if cmp_cpu >= min_cpu_limit and cmp_gpu >= min_gpu_limit and cmp_mem >= min_memory_limit and cmp_worker >= min_number_of_workers:
+        if cmp_cpu >= min_cpu_limit and cmp_gpu >= min_gpu_limit: #and cmp_mem >= min_memory_limit and cmp_worker >= min_number_of_workers:
             match_dict['matching'] = {'fit': True}
         else:
             match_dict['matching'] = {'fit': False}

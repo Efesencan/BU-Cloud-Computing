@@ -1,7 +1,7 @@
 import models
 from client import ChrisClient
 from tempfile import TemporaryDirectory, NamedTemporaryFile
-import os
+import os, json
 
 
 client = ChrisClient(
@@ -12,5 +12,6 @@ client = ChrisClient(
 #cr = client.list_compute_resources()
 #cr = client.get_compute_resources_details()
 #pl = client.get_plugin_details(plugin_id = 2)
-#match = client.match_compute_env('pl-simpledsapp')
-pl = client.get_plugin_resources()
+#print(json.dumps(pl, sort_keys=True, indent=4))
+match = client.match_compute_env('pl-s3retrieve')
+#pl = client.get_plugin_resources()
