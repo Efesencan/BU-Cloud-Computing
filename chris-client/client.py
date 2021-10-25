@@ -279,11 +279,12 @@ class ChrisClient:
         for resource in compute_resources:
             cmp_cpu = resource['cpus']
             cmp_gpu = resource['gpus']
-            cmp_cost = resource['cost_usd']
+            cmp_cost = resource['cost']
+            cmp_mem = resource['memory']
 
         match_dict = {}
 
-        if cmp_cpu >= min_cpu_limit and cmp_gpu >= min_gpu_limit: #and cmp_mem >= min_memory_limit and cmp_worker >= min_number_of_workers:
+        if cmp_cpu >= min_cpu_limit and cmp_gpu >= min_gpu_limit and cmp_mem >= min_memory_limit: # and cmp_worker >= min_number_of_workers:
             match_dict['matching'] = {'fit': True}
         else:
             match_dict['matching'] = {'fit': False}
