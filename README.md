@@ -16,6 +16,7 @@ ChRIS (ChRIS Research Integration Service) ([ChRIS](http://chrisproject.org/)) i
 
 Plugins for ChRIS are mostly written in Python with operational variables like number of GPUs, CPU threads, or amount of RAM baked into the code that the developer writes. Our goal for this project is to:
  * Develop a command line application for the end user to:
+   *  determine a compute resource's environment programatically   
    *  view the plug-in / pipeline’s operational variables/compute resources from the front end
    *  optimize a pipeline for cost, or speed and report the correct compute resources required
  
@@ -71,10 +72,6 @@ This project targets:
 * Designing algorithms to create different computing resources allocation plans (e.g. Best Performance Plan and Cost Effective Plan);
 
 * Optimize allocation plans for different types of chipsets (e.g. Different resource allocation method for Intel, NVIDIA, or AMD);
-
-* Support for graphics card hot swap.
-
-* Full support for vGPU assignment and GPU PCI device assignment
 
 
 ## 4. Solution Concept
