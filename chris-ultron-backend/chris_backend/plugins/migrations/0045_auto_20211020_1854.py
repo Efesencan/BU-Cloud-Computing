@@ -12,7 +12,7 @@ class Migration(migrations.Migration):
     operations = [
         migrations.AddField(
             model_name='computeresource',
-            name='cost_usd',
+            name='cost',
             field=models.FloatField(blank=True, default=0.0),
         ),
         migrations.AddField(
