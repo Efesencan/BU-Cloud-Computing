@@ -36,6 +36,7 @@ class PluginManager(object):
                                            help='sub-command help')
 
         # create the parser for the "add" command
+        # 'compute_url', 'description', 'cpus','cpu_power','cpu_power_unit', 'gpus','gpu_power','gpu_power_unit','memory', 'memory_unit', 'cost', 'currency'
         parser_add = subparsers.add_parser('add', help='add a new compute resource')
         parser_add.add_argument('computeresource',
                                 help="compute resource where plugins' instances run")
@@ -44,11 +45,27 @@ class PluginManager(object):
         parser_add.add_argument('--description', default='',
                                 help="compute resource's description")
         parser_add.add_argument('cpus', default='0',
-                                help="compute resource's url")
+                                help="number of cpus")
+        parser_add.add_argument('cpu_power', default='0.00',
+                                help="power of cpu")
+        parser_add.add_argument('cpu_power_unit', default='GHz',
+                                help="unit for power of cpu")
+
         parser_add.add_argument('gpus',default='0',
-                                help="compute resource's url")
+                                help="number of gpus")
+        parser_add.add_argument('gpu_power', default='0.00',
+                                help="power of gpu")
+        parser_add.add_argument('gpu_power_unit', default='GHz',
+                                help="unit for power of gpu")
+        parser_add.add_argument('memory', default='0',
+                                help="amount of memory")
+        parser_add.add_argument('memory_unit', default='GB',
+                                help="unit for memory")
+
         parser_add.add_argument('cost', default='0.00',
-                                help="compute resource's description")
+                                help="cost of environment")
+        parser_add.add_argument('currency', default='USD',
+                                help="currency of environment (USD, GBP, etc)")
 
 
         # create the parser for the "modify" command
@@ -61,12 +78,28 @@ class PluginManager(object):
                                 help="compute resource's new url")
         parser_modify.add_argument('--description', default='',
                                 help="compute resource's new description")
-        parser_modify.add_argument('--cpus',
+        parser_modify.add_argument('--cpus',  default=0,
                                 help="compute resource's new amount of cpus")
-        parser_modify.add_argument('--gpus',
+        parser_add.add_argument('--cpu_power', default=0.00,
+                                help="power of cpu")
+        parser_add.add_argument('--cpu_power_unit',  default='GHz',
+                                help="unit for power of cpu")
+        parser_modify.add_argument('--gpus', default=0,
                                 help="compute resource's new amount of gpus")
-        parser_modify.add_argument('--cost',
+        parser_add.add_argument('--gpu_power', default=0.00,
+                                help="power of gpu")
+        parser_add.add_argument('--gpu_power_unit', default='TFLOPS',
+                                help="unit for power of gpu")
+        parser_add.add_argument('--memory',  default=0,
+                                help="amount of memory")
+        parser_add.add_argument('--memory_unit', default='GB',
+                                help="unit for memory")
+        parser_modify.add_argument('--cost',  default=0.00,
                                 help="compute resource's new cost")
+        parser_add.add_argument('--currency', default='USD',
+                                help="currency of environment (USD, GBP, etc)")
+
+
 
         # create parser for the "register" command
         parser_register = subparsers.add_parser(
