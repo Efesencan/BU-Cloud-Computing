@@ -142,7 +142,9 @@ Minimum acceptance criteria is having an interface showing the details of the co
 ### Commands
 To bring up ChRIS Backend:
 ```
-docker swarm leave --force &&                                                docker swarm init --advertise-addr 127.0.0.1 &&                           ./unmake.sh ; sudo rm -fr CHRIS_REMOTE_FS; rm -fr CHRIS_REMOTE_FS; ./make.sh -U -I
+docker swarm leave --force &&                                                
+docker swarm init --advertise-addr 127.0.0.1 &&                           
+./unmake.sh ; sudo rm -fr CHRIS_REMOTE_FS; rm -fr CHRIS_REMOTE_FS; ./make.sh -U -I
 ```
 
 
