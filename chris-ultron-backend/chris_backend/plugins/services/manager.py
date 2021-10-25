@@ -47,7 +47,7 @@ class PluginManager(object):
                                 help="compute resource's url")
         parser_add.add_argument('gpus',default='0',
                                 help="compute resource's url")
-        parser_add.add_argument('cost_usd', default='0.00',
+        parser_add.add_argument('cost', default='0.00',
                                 help="compute resource's description")
 
 
@@ -65,7 +65,7 @@ class PluginManager(object):
                                 help="compute resource's new amount of cpus")
         parser_modify.add_argument('--gpus',
                                 help="compute resource's new amount of gpus")
-        parser_modify.add_argument('--cost_usd',
+        parser_modify.add_argument('--cost',
                                 help="compute resource's new cost")
 
         # create parser for the "register" command
@@ -98,7 +98,7 @@ class PluginManager(object):
         try:
             cr = ComputeResource.objects.get(name=name)
         except ComputeResource.DoesNotExist:
-            data = {'name': name, 'compute_url': url, 'description': description, 'cpus': cpus, 'gpus': gpus, 'cost_usd': cost_usd}
+            data = {'name': name, 'compute_url': url, 'description': description, 'cpus': cpus, 'gpus': gpus, 'cost': cost_usd}
             compute_resource_serializer = ComputeResourceSerializer(data=data)
             compute_resource_serializer.is_valid(raise_exception=True)
             cr = compute_resource_serializer.save()
@@ -120,7 +120,7 @@ class PluginManager(object):
             data['description'] = description if description else cr.description
             data['cpus'] = description if description else cr.description
             data['gpus'] = description if description else cr.description
-            data['cost_usd'] = description if description else cr.description
+            data['cost'] = description if description else cr.description
             compute_resource_serializer = ComputeResourceSerializer(cr, data=data)
             compute_resource_serializer.is_valid(raise_exception=True)
             cr = compute_resource_serializer.save()
