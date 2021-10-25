@@ -30,6 +30,7 @@ class ComputeResource(models.Model):
     name = models.CharField(max_length=100, unique=True)
     compute_url = models.URLField(max_length=300)
     description = models.CharField(max_length=600, blank=True)
+    workers = models.IntegerField(blank=True, default=1)
     cpus = models.IntegerField(blank=True, default=0)
     cpu_power = models.FloatField(blank=True, default=0.00)
     cpu_power_unit = models.CharField(max_length=300, blank=True, default = 'GHZ')

@@ -45,6 +45,8 @@ class PluginManager(object):
                                 help="compute resource's url")
         parser_add.add_argument('--description', default='',
                                 help="compute resource's description")
+        parser_add.add_argument('workers', default='1',
+                                help="number of workers")
         parser_add.add_argument('cpus', default='0',
                                 help="number of cpus")
         parser_add.add_argument('cpu_power', default='0.00',
@@ -78,6 +80,8 @@ class PluginManager(object):
                                    help="compute resource's new url")
         parser_modify.add_argument('--description', default='',
                                    help="compute resource's new description")
+        parser_modify.add_argument('--workers', default=1,
+                                   help="compute resource's new amount of workers")
         parser_modify.add_argument('--cpus', default=0,
                                    help="compute resource's new amount of cpus")
         parser_modify.add_argument('--cpu_power', default=0.00,
@@ -130,7 +134,7 @@ class PluginManager(object):
         try:
             cr = ComputeResource.objects.get(name=name)
         except ComputeResource.DoesNotExist:
-            data = {'name': name, 'compute_url': url, 'description': description, 'cpus': cpus, 'cpu_power': cpu_power,
+            data = {'name': name, 'compute_url': url, 'description': description, 'workers': workers, 'cpus': cpus, 'cpu_power': cpu_power,
                     'cpu_power_unit': cpu_power_unit, 'gpus': gpus, 'gpu_power': gpu_power,
                     'gpu_power_unit': gpu_power_unit, 'memory': memory, 'memory_unit': memory_unit, 'cost': cost,
                     'currency': currency}
@@ -139,7 +143,7 @@ class PluginManager(object):
             cr = compute_resource_serializer.save()
         return cr
 
-    def modify_compute_resource(self, name, new_name, url, description, cpus, cpu_power, cpu_power_unit, gpus,
+    def modify_compute_resource(self, name, new_name, url, description, workers, cpus, cpu_power, cpu_power_unit, gpus,
                                 gpu_power,
                                 gpu_power_unit, memory, memory_unit, cost, currency):
         """
@@ -155,6 +159,7 @@ class PluginManager(object):
             data['name'] = new_name if new_name else cr.name
             data['compute_url'] = url if url else cr.compute_url
             data['description'] = description if description else cr.description
+            data['workers'] = description if description else cr.description
             data['cpus'] = description if description else cr.description
             data['cpu_power'] = description if description else cr.description
             data['cpu_power_unit'] = description if description else cr.description
@@ -311,13 +316,13 @@ class PluginManager(object):
         options = self.parser.parse_args(args)
         if options.subparser_name == 'add':
             self.add_compute_resource(options.computeresource, options.url,
-                                      options.description, options.cpus, options.cpu_power, options.cpu_power_unit,
+                                      options.description, options.workers, options.cpus, options.cpu_power, options.cpu_power_unit,
                                       options.gpus, options.gpu_power,
                                       options.gpu_power_unit, options.memory, options.memory_unit, options.cost,
                                       options.currency)
         elif options.subparser_name == 'modify':
             self.modify_compute_resource(options.computeresource, options.name,
-                                         options.url, options.description, options.cpus, options.cpu_power,
+                                         options.url, options.description, options.workers, options.cpus, options.cpu_power,
                                          options.cpu_power_unit, options.gpus, options.gpu_power,
                                          options.gpu_power_unit, options.memory, options.memory_unit, options.cost,
                                          options.currency)
