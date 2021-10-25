@@ -80,23 +80,23 @@ class PluginManager(object):
                                    help="compute resource's new description")
         parser_modify.add_argument('--cpus', default=0,
                                    help="compute resource's new amount of cpus")
-        parser_add.add_argument('--cpu_power', default=0.00,
+        parser_modify.add_argument('--cpu_power', default=0.00,
                                 help="power of cpu")
-        parser_add.add_argument('--cpu_power_unit', default='GHz',
+        parser_modify.add_argument('--cpu_power_unit', default='GHz',
                                 help="unit for power of cpu")
         parser_modify.add_argument('--gpus', default=0,
                                    help="compute resource's new amount of gpus")
-        parser_add.add_argument('--gpu_power', default=0.00,
+        parser_modify.add_argument('--gpu_power', default=0.00,
                                 help="power of gpu")
-        parser_add.add_argument('--gpu_power_unit', default='TFLOPS',
+        parser_modify.add_argument('--gpu_power_unit', default='TFLOPS',
                                 help="unit for power of gpu")
-        parser_add.add_argument('--memory', default=0,
+        parser_modify.add_argument('--memory', default=0,
                                 help="amount of memory")
-        parser_add.add_argument('--memory_unit', default='GB',
+        parser_modify.add_argument('--memory_unit', default='GB',
                                 help="unit for memory")
         parser_modify.add_argument('--cost', default=0.00,
                                    help="compute resource's new cost")
-        parser_add.add_argument('--currency', default='USD',
+        parser_modify.add_argument('--currency', default='USD',
                                 help="currency of environment (USD, GBP, etc)")
 
         # create parser for the "register" command
