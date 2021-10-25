@@ -32,14 +32,14 @@ class ComputeResource(models.Model):
     description = models.CharField(max_length=600, blank=True)
     cpus = models.IntegerField(blank=True, default=0)
     cpu_power = models.FloatField(blank=True, default=0.00)
-    cpu_power_unit = models.CharField(blank=True, default = 'GHZ')
+    cpu_power_unit = models.CharField(max_length=300, blank=True, default = 'GHZ')
     gpus = models.IntegerField(blank=True, default=0)
     gpu_power = models.FloatField(blank=True, default=0.00)
-    gpu_power_unit = models.CharField(blank=True, default='TFLOPS')
+    gpu_power_unit = models.CharField(max_length=300, blank=True, default='TFLOPS')
     memory = models.IntegerField(blank=True, default=0)
-    memory_unit = models.CharField(blank=True, default = 'GB')
+    memory_unit = models.CharField(max_length=300, blank=True, default = 'GB')
     cost = models.FloatField(blank=True, default=0.00)
-    currency = models.CharField(blank=True, default = 'USD')
+    currency = models.CharField(max_length=300, blank=True, default = 'USD')
 
     def __str__(self):
         return self.name
