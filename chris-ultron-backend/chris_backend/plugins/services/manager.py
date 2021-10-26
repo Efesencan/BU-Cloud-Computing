@@ -125,7 +125,7 @@ class PluginManager(object):
 
         self.parser = parser
 
-    def add_compute_resource(self, name, url, description, cpus, cpu_power, cpu_power_unit, gpus, gpu_power,
+    def add_compute_resource(self, name, url, description, workers, cpus, cpu_power, cpu_power_unit, gpus, gpu_power,
                              gpu_power_unit, memory, memory_unit, cost, currency):
         """
         Add a new compute resource to the system.
