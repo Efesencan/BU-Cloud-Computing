@@ -22,9 +22,9 @@ import json
               help='Password for ChRIS')
 @click.option('--address', default='http://localhost:8000/api/v1/', help='Address for ChRIS')
 @click.option('--get_plugin_details', nargs=2, type=(str, str), default=(None, None), help='Get a plugin\'s details. Pass in type first (plugin_id or plugin_name) then the argument.')
-@click.option('--list_compute_resources', is_flag=True)
-@click.option('--get_compute_resources_details', is_flag=True)
-@click.option('--get_plugin_resources', is_flag=True)
+@click.option('--list_compute_resources', is_flag=True, help='List the compute resources')
+@click.option('--get_compute_resources_details', is_flag=True,  help='Get the details of the compute resource')
+@click.option('--get_plugin_resources', is_flag=True,  help='Get the plugin resources')
 def main(username, password, address, list_compute_resources, get_compute_resources_details, get_plugin_resources,
          get_plugin_details):
     client = ChrisClient(
