@@ -239,7 +239,7 @@ class ChrisClient:
         # print(json.dumps(plugin_names, sort_keys=True, indent=4))
         return plugin_names
 
-    def get_plugin_details(self, plugin_id = None, plugin_name = None):
+    def get_plugin_details(self, plugin_id=None, plugin_name=None):
         res = self._s.get(self.search_addr_plugins)
         res.raise_for_status()
         data = res.json()
@@ -260,11 +260,11 @@ class ChrisClient:
 
         if len(dict_plugin) == 0:
             raise PluginNotFoundError()
-        #print(json.dumps(dict_plugin, sort_keys=True, indent=4))
+        # print(json.dumps(dict_plugin, sort_keys=True, indent=4))
         return dict_plugin
 
     def match_compute_env(self, plugin_name):
-        plugin_details = self.get_plugin_details(plugin_name = plugin_name)
+        plugin_details = self.get_plugin_details(plugin_name=plugin_name)
         compute_addr = plugin_details[plugin_name]['compute_resources']
         min_cpu_limit = plugin_details[plugin_name]['min_cpu_limit']
         min_gpu_limit = plugin_details[plugin_name]['min_gpu_limit']
@@ -274,27 +274,21 @@ class ChrisClient:
         res = self._s.get(compute_addr)
         res.raise_for_status()
         data = res.json()
-        #print(json.dumps(data, sort_keys=True, indent=4))
+        # print(json.dumps(data, sort_keys=True, indent=4))
         compute_resources = data['results']
         for resource in compute_resources:
             cmp_cpu = resource['cpus']
             cmp_gpu = resource['gpus']
             cmp_cost = resource['cost']
             cmp_mem = resource['memory']
+            cmp_worker = resource['workers']
 
         match_dict = {}
 
-        if cmp_cpu >= min_cpu_limit and cmp_gpu >= min_gpu_limit and cmp_mem >= min_memory_limit: # and cmp_worker >= min_number_of_workers:
+        if cmp_cpu >= min_cpu_limit and cmp_gpu >= min_gpu_limit and cmp_mem >= min_memory_limit:  # and cmp_worker >= min_number_of_workers:
             match_dict['matching'] = {'fit': True}
         else:
             match_dict['matching'] = {'fit': False}
 
-        print(json.dumps(match_dict, sort_keys=True, indent=4))
+        # print(json.dumps(match_dict, sort_keys=True, indent=4))
         return match_dict
-
-
-
-
-
-
-
