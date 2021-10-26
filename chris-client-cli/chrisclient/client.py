@@ -227,7 +227,7 @@ class ChrisClient:
         print(json.dumps(dict_cr, sort_keys=True, indent=4))
         return dict_cr
 
-    def get_plugin_resources(self) -> Dict[str, list]:
+    def list_installed_plugins(self) -> Dict[str, list]:
         res = self._s.get(self.search_addr_plugins)
         res.raise_for_status()
         data = res.json()
