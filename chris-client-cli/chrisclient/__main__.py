@@ -20,7 +20,7 @@ import json
 @click.option('--username', default='chris', help='Username for ChRIS')
 @click.option('--password', default='chris1234',
               help='Password for ChRIS')
-@click.option('--address', default='http://10.0.4.213:8000/api/v1/', help='Address for ChRIS')
+@click.option('--address', default='http://localhost:8000/api/v1/', help='Address for ChRIS')
 @click.option('--get_plugin_details', nargs=2, type=(str, str), default=(None, None), help='Get a plugin\'s details. Pass in type first (plugin_id or plugin_name) then the argument.')
 @click.option('--list_compute_resources', is_flag=True)
 @click.option('--get_compute_resources_details', is_flag=True)
