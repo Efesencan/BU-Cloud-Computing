@@ -8,7 +8,7 @@ Usage: chrisclient [OPTIONS]
 
 Options:
   --username TEXT                 Username for ChRIS (default: 'chris')
-  --password TEXT                 Password for ChRIS (default: 'chris')
+  --password TEXT                 Password for ChRIS (default: 'chris1234')
   --address TEXT                  Address for ChRIS (default: 'http://localhost:8000/api/v1/')
   --get_plugin_details <TEXT TEXT>...
                                   Get a plugin's details. Pass in type first
