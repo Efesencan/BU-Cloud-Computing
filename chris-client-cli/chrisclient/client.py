@@ -3,7 +3,7 @@ import requests
 from typing import Optional, Set, Union, Dict
 import json
 
-from models import PluginInstance, Plugin, Pipeline, UploadedFiles, Feed, ComputeResource
+from .models import PluginInstance, Plugin, Pipeline, UploadedFiles, Feed, ComputeResource
 
 
 class ChrisClientError(Exception):
@@ -236,7 +236,7 @@ class ChrisClient:
         for plugin in plugins:
             plugin_name = plugin['name']
             plugin_names['plugins'].append(plugin_name)
-        print(json.dumps(plugin_names, sort_keys=True, indent=4))
+        # print(json.dumps(plugin_names, sort_keys=True, indent=4))
         return plugin_names
 
     def get_plugin_details(self, plugin_id = None, plugin_name = None):

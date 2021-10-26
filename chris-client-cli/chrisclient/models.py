@@ -1,7 +1,7 @@
 import os
 import requests
 from datetime import datetime
-from util import collection_helper, PaginationNotImplementedException
+from .util import collection_helper, PaginationNotImplementedException
 from typing import Optional, Set, Union, Iterator
 from collections.abc import Iterable
 from pathlib import Path

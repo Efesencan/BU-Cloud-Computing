@@ -1,0 +1,3 @@
+[console_scripts]
+chrisclient = chrisclient.__main__:main
+
