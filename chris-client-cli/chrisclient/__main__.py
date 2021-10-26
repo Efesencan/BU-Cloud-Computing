@@ -24,9 +24,10 @@ import json
 @click.option('--get_plugin_details', nargs=2, type=(str, str), default=(None, None), help='Get a plugin\'s details. Pass in type first (plugin_id or plugin_name) then the argument.')
 @click.option('--list_compute_resources', is_flag=True, help='List the compute resources')
 @click.option('--get_compute_resources_details', is_flag=True,  help='Get the details of the compute resource')
+@click.option('--match_compute_env', default='', help='Find the best environment for a plugin. Pass in plugin_name')
 @click.option('--list_installed_plugins', is_flag=True,  help='List the installed plugins')
 def main(username, password, address, list_compute_resources, get_compute_resources_details, list_installed_plugins,
-         get_plugin_details):
+         get_plugin_details, match_compute_env):
     client = ChrisClient(
         address=address,
         username=username,
@@ -49,6 +50,9 @@ def main(username, password, address, list_compute_resources, get_compute_resour
 
     if get_compute_resources_details:
         json_print(client.get_compute_resources_details())
+
+    if match_compute_env:
+        json_print(client.match_compute_env(match_compute_env))
 
     if list_installed_plugins:
         json_print(client.list_installed_plugins())
