@@ -46,7 +46,7 @@ def main(username, password, address, list_compute_resources, get_compute_resour
             json_print(client.get_plugin_details(plugin_name=plugin_name))
 
     if list_compute_resources:
-        json_print(client.get_compute_resources_details())
+        json_print(client.list_compute_resources())
 
     if get_compute_resources_details:
         json_print(client.get_compute_resources_details())
