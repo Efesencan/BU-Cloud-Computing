@@ -73,7 +73,7 @@ def main(username, password, address, list_compute_resources, get_compute_resour
 
 
 def json_print(obj):
-    print(json.dumps(obj, sort_keys=True, indent=4))
+    print(json.dumps(obj, sort_keys=False, indent=4))
 
 
 if __name__ == '__main__':
