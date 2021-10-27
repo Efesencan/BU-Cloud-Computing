@@ -1,4 +1,4 @@
-from .client import ChrisClient
+from .client import ChrisClient, PluginNotFoundError
 import click
 import json
 
@@ -45,10 +45,16 @@ def main(username, password, address, list_compute_resources, get_compute_resour
             except ValueError:
                 print('Invalid plugin id.')
                 exit(-1)
-            json_print(client.get_plugin_details(plugin_id=plugin_id))
+            try:
+                json_print(client.get_plugin_details(plugin_id=plugin_id))
+            except PluginNotFoundError:
+                print('No plugin found with that ID.')
         elif type_search == 'plugin_name':
             plugin_name = argument
-            json_print(client.get_plugin_details(plugin_name=plugin_name))
+            try:
+                json_print(client.get_plugin_details(plugin_name=plugin_name))
+            except PluginNotFoundError:
+                print('No plugin found with that name.')
 
     if list_compute_resources:
         json_print(client.list_compute_resources())
@@ -57,7 +63,10 @@ def main(username, password, address, list_compute_resources, get_compute_resour
         json_print(client.get_compute_resources_details())
 
     if check_plugin_compute_env:
-        json_print(client.check_plugin_compute_env(check_plugin_compute_env))
+        try:
+            json_print(client.check_plugin_compute_env(check_plugin_compute_env))
+        except PluginNotFoundError:
+            print('No plugin found with that name.')
 
     if list_installed_plugins:
         json_print(client.list_installed_plugins())
