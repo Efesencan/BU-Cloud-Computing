@@ -35,11 +35,15 @@ def main(username, password, address, list_compute_resources, get_compute_resour
     )
     if get_plugin_details:
         type_search, argument = get_plugin_details
+        if type_search != 'plugin_id' and type_search != 'plugin_name':
+            print("Invalid type. Specify 'plugin_id' or 'plugin_name'")
+            exit(-1)
         if type_search == 'plugin_id':
             try:
                 plugin_id = int(argument)
             except ValueError:
                 print('Invalid plugin id.')
+                exit(-1)
             json_print(client.get_plugin_details(plugin_id=plugin_id))
         elif type_search == 'plugin_name':
             plugin_name = argument
