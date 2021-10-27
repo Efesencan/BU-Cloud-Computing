@@ -3,7 +3,7 @@ import requests
 from typing import Optional, Set, Union, Dict
 import json
 
-from models import PluginInstance, Plugin, Pipeline, UploadedFiles, Feed, ComputeResource
+from .models import PluginInstance, Plugin, Pipeline, UploadedFiles, Feed, ComputeResource
 
 
 class ChrisClientError(Exception):
@@ -213,7 +213,7 @@ class ChrisClient:
         for cr in all_cr:
             list_cr.append(cr.name)
         dict_cr["compute_resources"] = list_cr
-        print(json.dumps(dict_cr, sort_keys=True, indent=4))
+        # print(json.dumps(dict_cr, sort_keys=True, indent=4))
         return dict_cr
 
     def get_compute_resources_details(self) -> Dict[str, Dict]:
@@ -224,7 +224,7 @@ class ChrisClient:
         dict_cr = {}
         for resource in compute_resources:
             dict_cr[resource['name']] = resource
-        print(json.dumps(dict_cr, sort_keys=True, indent=4))
+        # print(json.dumps(dict_cr, sort_keys=True, indent=4))
         return dict_cr
 
     def list_installed_plugins(self) -> Dict[str, list]:
@@ -244,7 +244,7 @@ class ChrisClient:
         res.raise_for_status()
         data = res.json()
         if plugin_id is None and plugin_name is None:
-            print(json.dumps(data, sort_keys=True, indent=4))
+            # print(json.dumps(data, sort_keys=True, indent=4))
             return data
         plugins = data['results']
         dict_plugin = {}
@@ -263,7 +263,7 @@ class ChrisClient:
         #print(json.dumps(dict_plugin, sort_keys=True, indent=4))
         return dict_plugin
 
-    def match_compute_env(self, plugin_name):
+    def check_plugin_compute_env(self, plugin_name):
         plugin_details = self.get_plugin_details(plugin_name = plugin_name)
         compute_addr = plugin_details[plugin_name]['compute_resources']
         min_cpu_limit = plugin_details[plugin_name]['min_cpu_limit']
@@ -271,26 +271,27 @@ class ChrisClient:
         min_memory_limit = plugin_details[plugin_name]['min_memory_limit']
         min_number_of_workers = plugin_details[plugin_name]['min_number_of_workers']
 
-        res = self._s.get(compute_addr)
+        res = self._s.get(self.addr_compute_resources)
         res.raise_for_status()
         data = res.json()
         #print(json.dumps(data, sort_keys=True, indent=4))
         compute_resources = data['results']
+        match_dict = {}
+        match_list = []
+        match_dict['plugin_name'] = plugin_name
         for resource in compute_resources:
             cmp_cpu = resource['cpus']
             cmp_gpu = resource['gpus']
             cmp_cost = resource['cost']
             cmp_mem = resource['memory']
             cmp_worker = resource['workers']
+            if cmp_cpu >= min_cpu_limit and cmp_gpu >= min_gpu_limit and cmp_mem >= min_memory_limit and cmp_worker >= min_number_of_workers:
+                match_list.append({resource['name']: {'fit': True}})
+            else:
+                match_list.append({resource['name']: {'fit': False}})
+        match_dict['matching'] = match_list
 
-        match_dict = {}
-
-        if cmp_cpu >= min_cpu_limit and cmp_gpu >= min_gpu_limit and cmp_mem >= min_memory_limit and cmp_worker >= min_number_of_workers:
-            match_dict['matching'] = {'fit': True}
-        else:
-            match_dict['matching'] = {'fit': False}
-
-        print(json.dumps(match_dict, sort_keys=True, indent=4))
+        # print(json.dumps(match_dict, sort_keys=True, indent=4))
         return match_dict
 
 

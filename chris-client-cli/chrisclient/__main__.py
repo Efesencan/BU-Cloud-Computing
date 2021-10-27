@@ -13,7 +13,7 @@ import json
 # pl = client.get_plugin_details(plugin_id = 2)
 # print(pl)
 # #print(json.dumps(pl, sort_keys=True, indent=4))
-# match = client.match_compute_env('pl-s3retrieve')
+# match = client.check_plugin_compute_env('pl-s3retrieve')
 # #pl = client.get_plugin_resources()
 
 @click.command()
@@ -24,10 +24,10 @@ import json
 @click.option('--get_plugin_details', nargs=2, type=(str, str), default=(None, None), help='Get a plugin\'s details. Pass in type first (plugin_id or plugin_name) then the argument.')
 @click.option('--list_compute_resources', is_flag=True, help='List the compute resources')
 @click.option('--get_compute_resources_details', is_flag=True,  help='Get the details of the compute resource')
-@click.option('--match_compute_env', default='', help='Find the best environment for a plugin. Pass in plugin_name')
+@click.option('--check_plugin_compute_env', default='', help='Check whether the compute env is suitable for plugin. Pass in plugin_name')
 @click.option('--list_installed_plugins', is_flag=True,  help='List the installed plugins')
 def main(username, password, address, list_compute_resources, get_compute_resources_details, list_installed_plugins,
-         get_plugin_details, match_compute_env):
+         get_plugin_details, check_plugin_compute_env):
     client = ChrisClient(
         address=address,
         username=username,
@@ -51,8 +51,8 @@ def main(username, password, address, list_compute_resources, get_compute_resour
     if get_compute_resources_details:
         json_print(client.get_compute_resources_details())
 
-    if match_compute_env:
-        json_print(client.match_compute_env(match_compute_env))
+    if check_plugin_compute_env:
+        json_print(client.check_plugin_compute_env(check_plugin_compute_env))
 
     if list_installed_plugins:
         json_print(client.list_installed_plugins())
