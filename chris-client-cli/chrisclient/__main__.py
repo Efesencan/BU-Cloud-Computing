@@ -35,7 +35,8 @@ def main(username, password, address, list_compute_resources, get_compute_resour
     )
     if get_plugin_details:
         type_search, argument = get_plugin_details
-        if type_search != 'plugin_id' and type_search != 'plugin_name':
+        if get_plugin_details != (None, None) and type_search not in ['plugin_id', 'plugin_name']:
+            print(type_search, get_plugin_details)
             print("Invalid type. Specify 'plugin_id' or 'plugin_name'")
             exit(-1)
         if type_search == 'plugin_id':
