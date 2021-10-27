@@ -14,7 +14,7 @@ Options:
                                   Get a plugin's details. Pass in type first
                                   (plugin_id or plugin_name) then the
                                   argument.
-                                  
+  --check_plugin_compute_env      Check whether the compute env is suitable for plugin. Pass in plugin_name                                
   --list_compute_resources        List the compute resources
   --get_compute_resources_details
                                   Get the details of the compute resource
