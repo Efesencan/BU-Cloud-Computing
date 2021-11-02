@@ -4,8 +4,8 @@ from typing import Optional, Set, Union, Dict
 import json
 
 from .models import PluginInstance, Plugin, Pipeline, UploadedFiles, Feed, ComputeResource
-
-
+### for debugging
+import networkx as nx
 class ChrisClientError(Exception):
     pass
 
@@ -262,7 +262,7 @@ class ChrisClient:
             raise PluginNotFoundError()
         #print(json.dumps(dict_plugin, sort_keys=True, indent=4))
         return dict_plugin
-
+    
     def check_plugin_compute_env(self, plugin_name):
         plugin_details = self.get_plugin_details(plugin_name = plugin_name)
         compute_addr = plugin_details[plugin_name]['compute_resources']
@@ -294,6 +294,103 @@ class ChrisClient:
         # print(json.dumps(match_dict, sort_keys=True, indent=4))
         return match_dict
 
+    def get_plugin_from_pipeline(self, pipeline_id: int):
+        return_dict = {}
+        ### get pipeline json object from database
+        res = self._s.get(self.addr + 'pipelines/' + str(pipeline_id))
+        res.raise_for_status()
+        data = res.json()
+        
+        ### get plugins topography from database
+        res_topo = self._s.get(data['plugin_pipings'])
+        res_topo.raise_for_status()
+        data_topo = res_topo.json()
+        ### networkx graph object
+        G = nx.DiGraph()
+        link_list = data_topo['results']
+        identity_dict = {} ### keep track of which node_id is corresponding to which plugin id
+        for link in link_list:
+            identity_dict[link['id']] = link['plugin_id']
+            if 'previous_id' in link:
+                previous_label = link['previous_id']
+                this_label = link['id']
+                G.add_edge(previous_label, this_label)
+        topolopy = list(nx.topological_sort(G)) ### list of node_id dictating which node come first
+        plugin_id_topo = [identity_dict[k] for k in topolopy]
+        
+
+        ### get list of plugins associated with that pipeline json object from database
+        res = self._s.get(data['plugins'])
+        res.raise_for_status()
+        data = res.json()
+        
+        plugin_list = data['results']
+        # pp = pprint.PrettyPrinter(indent=4)
+        # pp.pprint(data)
+        
+        ### extract information from each plugins
+        return_dict['status'] = 'OK'
+        return_dict['plugin_list'] = []
+        for plugin in plugin_list:
+            # print(plugin)
+            current_plugin = {}
+            current_plugin['plugin_id'] = plugin['id']
+            current_plugin['plugin_name'] = plugin['name']
+            return_dict['plugin_list'].append(current_plugin)
+        return_dict['topology_nodeid'] = topolopy
+        return_dict['topology'] = plugin_id_topo
+        return return_dict
+    ###     
+    def match_pipeline(self, pipeline_id: int, budget: int = 0):
+        '''
+        overview: 
+            takes in pipeline_id, budget and compute how to assign each plug-in to acheive lowest runtime while staying under budget
+        input:  
+            pipeline_id = id of the pipeline to be processed\n
+            budget = amount of availiable cost that constrain the compute environment assignment
+        output: a dictionary with list of compute environment assignment
+        '''
+
+
+        return_dict = {}
+
+        ### 1. get all plug-in id from the given pipeline
+        # payload = {
+        #     'id': pipeline_id
+        # }
+        
+        ### get pipeline json object from database
+        res = self._s.get(self.addr + 'pipelines/' + str(pipeline_id))
+        res.raise_for_status()
+        data = res.json()
+        ### get list of plugins associated with that pipeline json object from database
+        res = self._s.get(data['plugins'])
+        res.raise_for_status()
+        data = res.json()
+        plugin_list = data['results']
+        # print(data)
+        ### extract information from each plugins
+        for plugin in plugin_list:
+            # print(plugin)
+            plugin_id = plugin['id']
+            plugin_name = plugin['name']
+
+        
+        # ### 2. for each plug-in get the expected runtime and cost
+        # for plugin_id in plugin_list:
+        #     plugin_details = self.get_plugin_details(plugin_id= plugin_id)
+        #     compute_addr = plugin_details[plugin_id]['compute_resources']
+        #     min_cpu_limit = plugin_details[plugin_id]['min_cpu_limit']
+        ### 3. construct a network where node = current plug-in, edge = the environment to take, weight = expected runtime
+        ### 3.1 traverse the 1st path, record its total cost, set it as best path
+        ### 3.2 traverse the rest of the path, 
+        ###         if during the travsersal the cost exceed budget, skip it 
+        ###         if during the travsersal the expected runtime exceed best path expected runtime, skip it 
+        ###         when travsersal complete, compare the expected runtime, set path with lower runtime as best path
+        ### 4. calculate the rest of the path
+        ### 5. output the path it takes
+
+        return return_dict
 
 
 

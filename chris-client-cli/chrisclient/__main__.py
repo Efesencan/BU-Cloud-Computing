@@ -20,14 +20,17 @@ import json
 @click.option('--username', default='chris', help='Username for ChRIS')
 @click.option('--password', default='chris1234',
               help='Password for ChRIS')
-@click.option('--address', default='http://localhost:8000/api/v1/', help='Address for ChRIS')
+@click.option('--address', default='http://'+ '128.31.26.131' +':8000/api/v1/', help='Address for ChRIS')
 @click.option('--get_plugin_details', nargs=2, type=(str, str), default=(None, None), help='Get a plugin\'s details. Pass in type first (plugin_id or plugin_name) then the argument.')
 @click.option('--list_compute_resources', is_flag=True, help='List the compute resources')
 @click.option('--get_compute_resources_details', is_flag=True,  help='Get the details of the compute resource')
 @click.option('--check_plugin_compute_env', default='', help='Check whether the compute env is suitable for plugin. Pass in plugin_name')
 @click.option('--list_installed_plugins', is_flag=True,  help='List the installed plugins')
+@click.option('--get_plugin_from_pipeline', default=None,  help='given pipeline id, output information about plugins associated with that pipeline')
+@click.option('--match_pipeline', nargs=2, type=(str, str), default=(None, 0),  help='given pipeline id, budget, match each plugin in that pipeline with best expected runtime')
+
 def main(username, password, address, list_compute_resources, get_compute_resources_details, list_installed_plugins,
-         get_plugin_details, check_plugin_compute_env):
+         get_plugin_details, check_plugin_compute_env, get_plugin_from_pipeline, match_pipeline):
     client = ChrisClient(
         address=address,
         username=username,
@@ -70,6 +73,26 @@ def main(username, password, address, list_compute_resources, get_compute_resour
 
     if list_installed_plugins:
         json_print(client.list_installed_plugins())
+
+    if get_plugin_from_pipeline:
+        pipeline_id = get_plugin_from_pipeline
+        if pipeline_id is not None:
+            json_print(client.get_plugin_from_pipeline(pipeline_id))
+            
+    if match_pipeline:
+        pipeline_id, budget = match_pipeline
+        if pipeline_id is not None:
+            try:
+                pipeline_id = int(pipeline_id)
+            except ValueError:
+                print('Invalid pipeline_id id.')
+                exit(-1)
+            try:
+                budget = int(budget)
+            except ValueError:
+                print('Invalid budget amount.')
+                exit(-1)
+            json_print(client.match_pipeline(pipeline_id, budget))
 
 
 def json_print(obj):
