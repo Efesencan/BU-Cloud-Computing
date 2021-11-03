@@ -4,8 +4,11 @@ from typing import Optional, Set, Union, Dict
 import json
 
 from .models import PluginInstance, Plugin, Pipeline, UploadedFiles, Feed, ComputeResource
-### for debugging
+
 import networkx as nx
+### for debugging
+import matplotlib.pyplot as plt
+import math
 class ChrisClientError(Exception):
     pass
 
@@ -339,6 +342,7 @@ class ChrisClient:
             return_dict['plugin_list'].append(current_plugin)
         return_dict['topology_nodeid'] = topolopy
         return_dict['topology'] = plugin_id_topo
+        return_dict['mapping'] = identity_dict
         return return_dict
     ###     
     def match_pipeline(self, pipeline_id: int, budget: int = 0):
@@ -355,34 +359,122 @@ class ChrisClient:
         return_dict = {}
 
         ### 1. get all plug-in id from the given pipeline
-        # payload = {
-        #     'id': pipeline_id
-        # }
-        
-        ### get pipeline json object from database
-        res = self._s.get(self.addr + 'pipelines/' + str(pipeline_id))
-        res.raise_for_status()
-        data = res.json()
-        ### get list of plugins associated with that pipeline json object from database
-        res = self._s.get(data['plugins'])
-        res.raise_for_status()
-        data = res.json()
-        plugin_list = data['results']
-        # print(data)
-        ### extract information from each plugins
-        for plugin in plugin_list:
-            # print(plugin)
-            plugin_id = plugin['id']
-            plugin_name = plugin['name']
+        data = self.get_plugin_from_pipeline(pipeline_id)
+        plugin_list = data['plugin_list']
 
-        
-        # ### 2. for each plug-in get the expected runtime and cost
-        # for plugin_id in plugin_list:
-        #     plugin_details = self.get_plugin_details(plugin_id= plugin_id)
-        #     compute_addr = plugin_details[plugin_id]['compute_resources']
-        #     min_cpu_limit = plugin_details[plugin_id]['min_cpu_limit']
+        ### 1.2 get all compute env cost
+        res = self._s.get(self.addr_compute_resources)
+        res.raise_for_status()
+        env_data = res.json()
+        cost_dict = {}
+        compute_resources = env_data['results']
+        for i, env in enumerate(compute_resources):
+            cost_dict[env['name']] = env['cost']
+            cost_dict[i] = env['cost']
+            # cmp_cost = resource['cost']
+        # print(cost_dict)
+        ### 2. for each plug-in get the expected runtime and cost
+        ###
+        runtime_dict = {}
+        for plugin in plugin_list:
+            runtime_dict[plugin['plugin_id']] = {}
+            for i, env in enumerate(compute_resources):
+                expected_runtime = 100 # this should be changed to input size
+                ### need to change how we calculate expected_runtime
+                expected_runtime = expected_runtime / env['cpus']
+                ###
+                runtime_dict[plugin['plugin_id']][env['name']] = expected_runtime
+                runtime_dict[plugin['plugin_id']][i] = expected_runtime
+        # print(runtime_dict)
+        # print(runtime_dict['pl-s3retrieve']['test_env1'])
         ### 3. construct a network where node = current plug-in, edge = the environment to take, weight = expected runtime
-        ### 3.1 traverse the 1st path, record its total cost, set it as best path
+        print("node sequence: ", data['topology'])
+        print("plugin sequence: ", [plugin['plugin_name'] for plugin in data['plugin_list']])
+        G = nx.DiGraph()
+        count = 0
+        num_env = len(compute_resources)
+        pos = {}
+        pos[0] = (0,0)
+        for n in range(0, len(data['topology'])):
+
+            ### 1st layer
+            # print("layer ", n)
+            if count == 0:
+                for i, env in enumerate(compute_resources):
+                    G.add_edge(count, (count+i+1), weight=env['cost'])
+                    pos[count+i+1] = (1,i)
+                    # print((1,i))
+                count = count + 1
+            ### 2nd and next layer
+            else:
+                for i, env in enumerate(compute_resources):
+                    for j, env2 in enumerate(compute_resources):
+                        G.add_edge(count+i, count+num_env+j, weight=env2['cost'])
+                        pos[count+num_env+j] = (math.ceil(count/num_env)+1,j)
+                        # print("edge: ", (count+i, count+num_env+j))
+                        # print((math.ceil(count/num_env)+1,j))
+                count = count + num_env
+        ### last layer
+        # print("last layer")
+        for i, env in enumerate(compute_resources):
+            G.add_edge(count+i, count+num_env, weight=0)
+        pos[count+i+1] = (math.ceil(count/num_env)+1,0)
+        count = count + num_env
+        ### use next 2 lines to print what's the network looks like
+        # nx.draw(G, pos=pos)
+        # plt.show()
+        ### 3.1 calculate all possible path
+        best_path_time = -1
+        best_path_cost = -1
+        best_path = []
+        ### for each path, calculate total expected runtime and total cost
+        for path in nx.all_simple_paths(G, source=0, target=count):
+            
+            # print(path[:-1])
+            # get total expected time
+            total_time = 0
+            total_cost = 0
+            for i,v in enumerate(path[:-2]):
+                next_node = path[i+1]
+                which_plugin = data['topology'][i]
+                env_index = cost_dict[(next_node -1) % num_env]
+                total_time = total_time + runtime_dict[which_plugin][env_index]
+                total_cost = total_cost + cost_dict[env_index]
+                # if v == 0:
+                #     total_time = total_time + runtime_dict[which_plugin][cost_dict[next_node % num_env]]
+                # else:
+                #     total_time = total_time + runtime_dict[which_plugin][cost_dict[int(next_node-this_node-num_env)]]
+
+                # print(path)
+            # print(path[:-1])
+            # print('total time = ', total_time)
+            # print('total cost =', total_cost)
+            ### replace the current best path if it doesn't go over budget and any of the following is true
+            ### 1. there's no best path yet
+            ### 2. current path has better time
+            ### 3. current path has same time but with lower cost
+            if total_cost <= budget:
+                if total_time < best_path_time or best_path_time == -1:
+                    best_path_time = total_time
+                    best_path_cost = total_cost
+                    best_path = path
+                if total_time == best_path_time and total_cost< best_path_cost:
+                    best_path_time = total_time
+                    best_path_cost = total_cost
+                    best_path = path
+                    
+        # print("best path:", best_path)
+        ### chaging from path to which env
+        env_path = []
+        for i,v in enumerate(best_path[:-2]):
+            next_node = best_path[i+1]
+            env_index = int(cost_dict[(next_node -1) % num_env])
+            env_path.append(list(compute_resources)[env_index]['name'])
+
+        return_dict = {}
+        return_dict['status'] = 'OK'
+        return_dict['env selection'] = env_path
+
         ### 3.2 traverse the rest of the path, 
         ###         if during the travsersal the cost exceed budget, skip it 
         ###         if during the travsersal the expected runtime exceed best path expected runtime, skip it 
