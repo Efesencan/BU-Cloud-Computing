@@ -1,4 +1,5 @@
 from os import path
+from click import exceptions
 import requests
 from typing import Optional, Set, Union, Dict
 import json
@@ -297,7 +298,7 @@ class ChrisClient:
         # print(json.dumps(match_dict, sort_keys=True, indent=4))
         return match_dict
 
-    def get_plugin_from_pipeline(self, pipeline_id: int):
+    def get_pipeline_details(self, pipeline_id: int):
         return_dict = {}
         ### get pipeline json object from database
         res = self._s.get(self.addr + 'pipelines/' + str(pipeline_id))
@@ -343,6 +344,7 @@ class ChrisClient:
         return_dict['topology_nodeid'] = topolopy
         return_dict['topology'] = plugin_id_topo
         return_dict['mapping'] = identity_dict
+        # print(return_dict)
         return return_dict
     ###     
     def match_pipeline(self, pipeline_id: int, budget: int = 0):
@@ -359,7 +361,7 @@ class ChrisClient:
         return_dict = {}
 
         ### 1. get all plug-in id from the given pipeline
-        data = self.get_plugin_from_pipeline(pipeline_id)
+        data = self.get_pipeline_details(pipeline_id)
         plugin_list = data['plugin_list']
 
         ### 1.2 get all compute env cost
@@ -401,6 +403,9 @@ class ChrisClient:
             # print("layer ", n)
             if count == 0:
                 for i, env in enumerate(compute_resources):
+                    ### DO REQUIREMENT CHECK HERE
+                    ### if check fail don't add edge
+
                     G.add_edge(count, (count+i+1), weight=env['cost'])
                     pos[count+i+1] = (1,i)
                     # print((1,i))
@@ -409,6 +414,9 @@ class ChrisClient:
             else:
                 for i, env in enumerate(compute_resources):
                     for j, env2 in enumerate(compute_resources):
+                        ### DO REQUIREMENT CHECK HERE
+                        ### if check fail don't add edge
+                        
                         G.add_edge(count+i, count+num_env+j, weight=env2['cost'])
                         pos[count+num_env+j] = (math.ceil(count/num_env)+1,j)
                         # print("edge: ", (count+i, count+num_env+j))
@@ -417,6 +425,9 @@ class ChrisClient:
         ### last layer
         # print("last layer")
         for i, env in enumerate(compute_resources):
+            ### DO REQUIREMENT CHECK HERE
+            ### if check fail don't add edge
+
             G.add_edge(count+i, count+num_env, weight=0)
         pos[count+i+1] = (math.ceil(count/num_env)+1,0)
         count = count + num_env
@@ -462,6 +473,8 @@ class ChrisClient:
                     best_path_time = total_time
                     best_path_cost = total_cost
                     best_path = path
+
+            
                     
         # print("best path:", best_path)
         ### chaging from path to which env
@@ -469,7 +482,8 @@ class ChrisClient:
         for i,v in enumerate(best_path[:-2]):
             next_node = best_path[i+1]
             env_index = int(cost_dict[(next_node -1) % num_env])
-            env_path.append(list(compute_resources)[env_index]['name'])
+            env_name = list(compute_resources)[env_index]['name']
+            env_path.append(env_name)
 
         return_dict = {}
         return_dict['status'] = 'OK'
