@@ -1,4 +1,3 @@
-
 from django.contrib import admin
 from django.utils import timezone
 from django.urls import path
@@ -16,14 +15,15 @@ from .models import PluginMeta, Plugin, ComputeResource
 from .serializers import ComputeResourceSerializer, PluginSerializer
 from .services.manager import PluginManager
 
-
 plugin_readonly_fields = [fld.name for fld in Plugin._meta.fields if
                           fld.name != 'compute_resources']
 
 
 class ComputeResourceAdmin(admin.ModelAdmin):
     readonly_fields = ['creation_date', 'modification_date']
-    list_display = ('name', 'compute_url', 'description', 'id', 'workers', 'cpus','cpu_power','cpu_power_unit', 'gpus','gpu_power','gpu_power_unit','memory', 'memory_unit', 'cost', 'currency')
+    list_display = (
+        'name', 'compute_url', 'description', 'id', 'workers', 'cpus', 'cpu_clock_speed_ghz', 'gpus',
+        'gpu_memory', 'memory', 'cost', 'currency')
     list_filter = ['name', 'creation_date', 'modification_date']
     search_fields = ['name', 'description']
 
@@ -31,7 +31,8 @@ class ComputeResourceAdmin(admin.ModelAdmin):
         """
         Overriden to only show the required fields in the add compute resource page.
         """
-        self.fields = ['name', 'compute_url', 'description', 'workers', 'cpus','cpu_power','cpu_power_unit', 'gpus','gpu_power','gpu_power_unit','memory', 'memory_unit', 'cost', 'currency']
+        self.fields = ['name', 'compute_url', 'description', 'workers', 'cpus', 'cpu_clock_speed_ghz', 'gpus',
+                       'gpu_memory', 'memory', 'cost', 'currency']
         return admin.ModelAdmin.add_view(self, request, form_url, extra_context)
 
     def change_view(self, request, object_id, form_url='', extra_context=None):
@@ -39,7 +40,8 @@ class ComputeResourceAdmin(admin.ModelAdmin):
         Overriden to show all compute resources's fields in the compute resource page.
         """
         self.fields = ['name', 'compute_url', 'description', 'creation_date',
-                       'modification_date',  'workers', 'cpus','cpu_power','cpu_power_unit', 'gpus','gpu_power','gpu_power_unit','memory', 'memory_unit', 'cost', 'currency']
+                       'modification_date', 'workers', 'cpus', 'cpu_clock_speed_ghz', 'gpus', 'gpu_memory',
+                       'memory', 'cost', 'currency']
         return admin.ModelAdmin.change_view(self, request, object_id, form_url,
                                             extra_context)
 
@@ -314,7 +316,9 @@ class ComputeResourceAdminList(generics.ListCreateAPIView):
         """
         response = super(ComputeResourceAdminList, self).list(request, *args, **kwargs)
         # append write template
-        template_data = {'name': '', 'compute_url': '', 'description': '', 'workers': '', 'cpus': '','cpu_power': '','cpu_power_unit': '', 'gpus': '','gpu_power': '','gpu_power_unit': '','memory': '', 'memory_unit': '','cost': '', 'currency': ''}
+        template_data = {'name': '', 'compute_url': '', 'description': '', 'workers': '', 'cpus': '',
+                         'cpu_clock_speed_ghz': '', 'gpus': '', 'gpu_memory': '', 'memory': '',
+                         'cost': '', 'currency': ''}
         return services.append_collection_template(response, template_data)
 
 

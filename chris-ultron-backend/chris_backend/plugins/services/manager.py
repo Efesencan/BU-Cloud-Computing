@@ -37,7 +37,7 @@ class PluginManager(object):
                                            help='sub-command help')
 
         # create the parser for the "add" command
-        # 'compute_url', 'description', 'cpus','cpu_power','cpu_power_unit', 'gpus','gpu_power','gpu_power_unit','memory', 'memory_unit', 'cost', 'currency'
+        # 'compute_url', 'description', 'cpus','cpu_clock_speed_ghz', 'gpus','gpu_memory','memory', 'memory_unit', 'cost', 'currency'
         parser_add = subparsers.add_parser('add', help='add a new compute resource')
         parser_add.add_argument('computeresource',
                                 help="compute resource where plugins' instances run")
@@ -48,22 +48,15 @@ class PluginManager(object):
         parser_add.add_argument('workers', default='1',
                                 help="number of workers")
         parser_add.add_argument('cpus', default='0',
-                                help="number of cpus")
-        parser_add.add_argument('cpu_power', default='0.00',
-                                help="power of cpu")
-        parser_add.add_argument('cpu_power_unit', default='GHz',
-                                help="unit for power of cpu")
-
+                                help="number of CPUs")
+        parser_add.add_argument('cpu_clock_speed_ghz', default='0.00',
+                                help="clock speed of CPUs")
         parser_add.add_argument('gpus', default='0',
-                                help="number of gpus")
-        parser_add.add_argument('gpu_power', default='0.00',
-                                help="power of gpu")
-        parser_add.add_argument('gpu_power_unit', default='GHz',
-                                help="unit for power of gpu")
+                                help="number of GPUs")
+        parser_add.add_argument('gpu_memory', default='0.00',
+                                help="memory of GPUs")
         parser_add.add_argument('memory', default='0',
                                 help="amount of memory")
-        parser_add.add_argument('memory_unit', default='GB',
-                                help="unit for memory")
 
         parser_add.add_argument('cost', default='0.00',
                                 help="cost of environment")
@@ -83,25 +76,19 @@ class PluginManager(object):
         parser_modify.add_argument('--workers', default=1,
                                    help="compute resource's new amount of workers")
         parser_modify.add_argument('--cpus', default=0,
-                                   help="compute resource's new amount of cpus")
-        parser_modify.add_argument('--cpu_power', default=0.00,
-                                help="power of cpu")
-        parser_modify.add_argument('--cpu_power_unit', default='GHz',
-                                help="unit for power of cpu")
+                                   help="compute resource's new amount of CPUs")
+        parser_modify.add_argument('--cpu_clock_speed_ghz', default=0.00,
+                                   help="CPU clock speed in GHz")
         parser_modify.add_argument('--gpus', default=0,
-                                   help="compute resource's new amount of gpus")
-        parser_modify.add_argument('--gpu_power', default=0.00,
-                                help="power of gpu")
-        parser_modify.add_argument('--gpu_power_unit', default='TFLOPS',
-                                help="unit for power of gpu")
+                                   help="compute resource's new amount of GPUs")
+        parser_modify.add_argument('--gpu_memory', default=0.00,
+                                   help="memory of GPU")
         parser_modify.add_argument('--memory', default=0,
-                                help="amount of memory")
-        parser_modify.add_argument('--memory_unit', default='GB',
-                                help="unit for memory")
+                                   help="amount of memory")
         parser_modify.add_argument('--cost', default=0.00,
                                    help="compute resource's new cost")
         parser_modify.add_argument('--currency', default='USD',
-                                help="currency of environment (USD, GBP, etc)")
+                                   help="currency of environment (USD, GBP, etc)")
 
         # create parser for the "register" command
         parser_register = subparsers.add_parser(
@@ -125,8 +112,8 @@ class PluginManager(object):
 
         self.parser = parser
 
-    def add_compute_resource(self, name, url, description, workers, cpus, cpu_power, cpu_power_unit, gpus, gpu_power,
-                             gpu_power_unit, memory, memory_unit, cost, currency):
+    def add_compute_resource(self, name, url, description, workers, cpus, cpu_clock_speed_ghz, gpus, gpu_memory, memory,
+                             cost, currency):
         """
         Add a new compute resource to the system.
         """
@@ -134,18 +121,17 @@ class PluginManager(object):
         try:
             cr = ComputeResource.objects.get(name=name)
         except ComputeResource.DoesNotExist:
-            data = {'name': name, 'compute_url': url, 'description': description, 'workers': workers, 'cpus': cpus, 'cpu_power': cpu_power,
-                    'cpu_power_unit': cpu_power_unit, 'gpus': gpus, 'gpu_power': gpu_power,
-                    'gpu_power_unit': gpu_power_unit, 'memory': memory, 'memory_unit': memory_unit, 'cost': cost,
+            data = {'name': name, 'compute_url': url, 'description': description, 'workers': workers, 'cpus': cpus,
+                    'cpu_clock_speed_ghz': cpu_clock_speed_ghz,
+                    'gpus': gpus, 'gpu_memory': gpu_memory, 'memory': memory, 'cost': cost,
                     'currency': currency}
             compute_resource_serializer = ComputeResourceSerializer(data=data)
             compute_resource_serializer.is_valid(raise_exception=True)
             cr = compute_resource_serializer.save()
         return cr
 
-    def modify_compute_resource(self, name, new_name, url, description, workers, cpus, cpu_power, cpu_power_unit, gpus,
-                                gpu_power,
-                                gpu_power_unit, memory, memory_unit, cost, currency):
+    def modify_compute_resource(self, name, new_name, url, description, workers, cpus, cpu_clock_speed_ghz,
+                                gpus, gpu_memory, memory, cost, currency):
         """
         Modify an existing compute resource and add the current date as a new
         modification date.
@@ -159,17 +145,14 @@ class PluginManager(object):
             data['name'] = new_name if new_name else cr.name
             data['compute_url'] = url if url else cr.compute_url
             data['description'] = description if description else cr.description
-            data['workers'] = description if description else cr.description
-            data['cpus'] = description if description else cr.description
-            data['cpu_power'] = description if description else cr.description
-            data['cpu_power_unit'] = description if description else cr.description
-            data['gpus'] = description if description else cr.description
-            data['gpu_power'] = description if description else cr.description
-            data['gpu_power_unit'] = description if description else cr.description
-            data['memory'] = description if description else cr.description
-            data['memory_unit'] = description if description else cr.description
-            data['cost'] = description if description else cr.description
-            data['currency'] = description if description else cr.description
+            data['workers'] = workers if workers else cr.workers
+            data['cpus'] = cpus if cpus else cr.cpus
+            data['cpu_clock_speed_ghz'] = cpu_clock_speed_ghz if cpu_clock_speed_ghz else cr.cpu_clock_speed_ghz
+            data['gpus'] = gpus if gpus else cr.gpus
+            data['gpu_memory'] = gpu_memory if gpu_memory else cr.gpu_memory
+            data['memory'] = memory if memory else cr.memory
+            data['cost'] = cost if cost else cr.cost
+            data['currency'] = currency if currency else cr.currency
             compute_resource_serializer = ComputeResourceSerializer(cr, data=data)
             compute_resource_serializer.is_valid(raise_exception=True)
             cr = compute_resource_serializer.save()
@@ -316,15 +299,15 @@ class PluginManager(object):
         options = self.parser.parse_args(args)
         if options.subparser_name == 'add':
             self.add_compute_resource(options.computeresource, options.url,
-                                      options.description, options.workers, options.cpus, options.cpu_power, options.cpu_power_unit,
-                                      options.gpus, options.gpu_power,
-                                      options.gpu_power_unit, options.memory, options.memory_unit, options.cost,
+                                      options.description, options.workers, options.cpus, options.cpu_clock_speed_ghz,
+                                      options.gpus, options.gpu_memory,
+                                      options.memory, options.cost,
                                       options.currency)
         elif options.subparser_name == 'modify':
             self.modify_compute_resource(options.computeresource, options.name,
-                                         options.url, options.description, options.workers, options.cpus, options.cpu_power,
-                                         options.cpu_power_unit, options.gpus, options.gpu_power,
-                                         options.gpu_power_unit, options.memory, options.memory_unit, options.cost,
+                                         options.url, options.description, options.workers, options.cpus,
+                                         options.cpu_clock_speed_ghz, options.gpus, options.gpu_memory,
+                                         options.memory, options.cost,
                                          options.currency)
         elif options.subparser_name == 'register':
             if options.pluginurl:

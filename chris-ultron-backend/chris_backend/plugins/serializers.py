@@ -1,4 +1,3 @@
-
 import re
 
 from django.utils import timezone
@@ -11,11 +10,11 @@ from .fields import MemoryInt, CPUInt
 
 
 class ComputeResourceSerializer(serializers.HyperlinkedModelSerializer):
-
     class Meta:
         model = ComputeResource
         fields = ('url', 'id', 'creation_date', 'modification_date', 'name',
-                  'compute_url', 'description', 'workers', 'cpus','cpu_power','cpu_power_unit', 'gpus','gpu_power','gpu_power_unit','memory', 'memory_unit', 'cost', 'currency')
+                  'compute_url', 'description', 'workers', 'cpus', 'cpu_clock_speed_ghz', 'gpus',
+                  'gpu_memory', 'memory', 'cost', 'currency')
 
 
 class PluginMetaSerializer(serializers.HyperlinkedModelSerializer):
@@ -58,7 +57,7 @@ class PluginSerializer(serializers.HyperlinkedModelSerializer):
         model = Plugin
         fields = ('url', 'id', 'creation_date', 'name', 'version', 'dock_image',
                   'public_repo', 'icon', 'type', 'stars', 'authors', 'title', 'category',
-                  'description', 'documentation', 'license',  'execshell', 'selfpath',
+                  'description', 'documentation', 'license', 'execshell', 'selfpath',
                   'selfexec', 'min_number_of_workers', 'max_number_of_workers',
                   'min_cpu_limit', 'max_cpu_limit', 'min_memory_limit',
                   'max_memory_limit', 'min_gpu_limit', 'max_gpu_limit', 'meta',
