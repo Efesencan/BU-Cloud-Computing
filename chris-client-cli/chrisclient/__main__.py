@@ -171,7 +171,7 @@ def match_pipeline(context, match_type, pipeline_id, budget, env_list):
 @click.pass_context
 def list_compute_resources(context):
     '''
-    List all available the compute resources
+    List all available pipelines
     '''
     client = context.obj['client']
     json_print(client.list_all_pipelines())

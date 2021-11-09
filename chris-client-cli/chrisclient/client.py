@@ -531,16 +531,11 @@ class ChrisClient:
         res.raise_for_status()
         data = res.json()
         pipelines = data['results']
-        #pipeline_names = {'pipelines': []}
         pipeline_names = {}
         for pipeline in pipelines:
             pipeline_name = pipeline['name']
             pipeline_names[str(pipeline_name)] = pipeline
-            #pipeline_names['pipelines'].append(pipeline_name)
-        # print(json.dumps(plugin_names, sort_keys=True, indent=4))
         return pipeline_names
-        #dict_plugin[plugin['name']] = plugin
-        #return data['results']
 
 
 
