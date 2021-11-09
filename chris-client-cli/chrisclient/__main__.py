@@ -22,7 +22,7 @@ import json
 @click.option('--username', default='chris', help='Username for ChRIS')
 @click.option('--password', default='chris1234',
               help='Password for ChRIS')
-@click.option('--address', default='http://'+ 'localhost' +':8000/api/v1/', help='Address for ChRIS')
+@click.option('--address', default='http://'+ '128.31.26.131' +':8000/api/v1/', help='Address for ChRIS')
 def main(context, username, password, address):
     context.ensure_object(dict)
     context.obj['client'] = ChrisClient(
@@ -31,22 +31,17 @@ def main(context, username, password, address):
         password=password
     )
 
-# @cli.command()
-# def initdb():
-#     click.echo('Initialized the database')
-
-# @cli.command()
-# def dropdb():
-#     click.echo('Dropped the database')
-
 @main.command('get_plugin_details')
 @click.pass_context
 @click.option('--id', '--plugin_id', default=None, help='Get a plugin\'s details from given plugin id.')
 @click.option('--name', '--plugin_name', default=None, help='Get a plugin\'s details from given plugin name.')
 def get_plugin_details(context, id, name):
     '''
-    Get a plugin\'s details.
-    Pass in type first (--id or --plugin_id or --name or --plugin_name) then the argument.
+    Get a plugin\'s details.\n
+    Pass in type first (--id or --plugin_id or --name or --plugin_name) then the argument.\n
+    Example: \n
+    \t$ chrisclient get_plugin_details --id 1\n
+    \t$ chrisclient get_plugin_details --plugin_name pl-simplefsapp
     '''
     client = context.obj['client']
     if id is not None:
@@ -74,6 +69,8 @@ def get_plugin_details(context, id, name):
 def list_compute_resources(context):
     '''
     List all available the compute resources
+    Example: \n
+    \t$ chrisclient list_compute_resources
     '''
     client = context.obj['client']
     json_print(client.list_compute_resources())
@@ -83,6 +80,8 @@ def list_compute_resources(context):
 def get_compute_resources_details(context):
     '''
     Get the details of all available the compute resources
+    Example: \n
+    \t$ chrisclient get_compute_resources_details
     '''
     client = context.obj['client']
     json_print(client.get_compute_resources_details())
@@ -94,6 +93,10 @@ def check_plugin_compute_env(context, plugin_name):
     '''
     Check whether the compute env is suitable for plugin.
     Pass in plugin_name
+    Output: for each available compute env, output True/False indicating whether compute env satisfy the plugin requirement.\n
+    If False, also output the failure reason
+    Example: \n
+    \t$ chrisclient check_plugin_compute_env pl-simplefsapp
     '''
     client = context.obj['client']
     try:
@@ -106,6 +109,8 @@ def check_plugin_compute_env(context, plugin_name):
 def list_installed_plugins(context):
     '''
     List all installed plugins
+    Example: \n
+    \t$ chrisclient list_installed_plugins
     '''
     client = context.obj['client']
     json_print(client.list_installed_plugins())
@@ -120,6 +125,8 @@ def get_pipeline_details(context, pipeline_id):
     - all plugins associated with that pipeline\n
     - the topological order of plugins\n
     - the mapping from topological order to plugin_id
+    Example: \n
+    \t$ chrisclient get_pipeline_details 1
     '''
     client = context.obj['client']
     if pipeline_id is not None:
@@ -131,11 +138,12 @@ def get_pipeline_details(context, pipeline_id):
 @click.argument('pipeline_id')
 @click.argument('budget', required=False)
 @click.argument('env_list', required=False)
-# @click.argument('budget')
 def match_pipeline(context, match_type, pipeline_id, budget, env_list):
     '''
     Pass in: pipeline_id, budget (money in USD)\n
     Output: match each plugin in that pipeline with best expected runtime
+    Example: \n
+    \t$ chrisclient match_pipeline 1 --match_type=budget 1\n
     '''
     client = context.obj['client']
     try:
@@ -168,75 +176,6 @@ def list_compute_resources(context):
     client = context.obj['client']
     json_print(client.list_all_pipelines())
     
-
-# @click.option('--match_pipeline', nargs=2, type=(str, str), default=(None, 0),  help='given pipeline id, budget, match each plugin in that pipeline with best expected runtime')
-
-# def sub_main(username, password, address, list_compute_resources, get_compute_resources_details, list_installed_plugins,
-#          get_plugin_details, check_plugin_compute_env, get_pipeline_details, match_pipeline):
-#     ''' sub_1'''
-#     client = ChrisClient(
-#         address=address,
-#         username=username,
-#         password=password
-#     )
-#     if get_plugin_details:
-#         type_search, argument = get_plugin_details
-#         if get_plugin_details != (None, None) and type_search not in ['plugin_id', 'plugin_name']:
-#             print(type_search, get_plugin_details)
-#             print("Invalid type. Specify 'plugin_id' or 'plugin_name'")
-#             exit(-1)
-#         if type_search == 'plugin_id':
-#             try:
-#                 plugin_id = int(argument)
-#             except ValueError:
-#                 print('Invalid plugin id.')
-#                 exit(-1)
-#             try:
-#                 json_print(client.get_plugin_details(plugin_id=plugin_id))
-#             except PluginNotFoundError:
-#                 print('No plugin found with that ID.')
-#         elif type_search == 'plugin_name':
-#             plugin_name = argument
-#             try:
-#                 json_print(client.get_plugin_details(plugin_name=plugin_name))
-#             except PluginNotFoundError:
-#                 print('No plugin found with that name.')
-
-#     if list_compute_resources:
-#         json_print(client.list_compute_resources())
-
-#     if get_compute_resources_details:
-#         json_print(client.get_compute_resources_details())
-
-#     if check_plugin_compute_env:
-#         try:
-#             json_print(client.check_plugin_compute_env(check_plugin_compute_env))
-#         except PluginNotFoundError:
-#             print('No plugin found with that name.')
-
-#     if list_installed_plugins:
-#         json_print(client.list_installed_plugins())
-
-#     if get_pipeline_details:
-#         pipeline_id = get_pipeline_details
-#         if pipeline_id is not None:
-#             json_print(client.get_pipeline_details(pipeline_id))
-            
-#     if match_pipeline:
-#         pipeline_id, budget = match_pipeline
-#         if pipeline_id is not None:
-#             try:
-#                 pipeline_id = int(pipeline_id)
-#             except ValueError:
-#                 print('Invalid pipeline_id id.')
-#                 exit(-1)
-#             try:
-#                 budget = int(budget)
-#             except ValueError:
-#                 print('Invalid budget amount.')
-#                 exit(-1)
-#             json_print(client.match_pipeline(pipeline_id, budget))
-
 
 def json_print(obj):
     print(json.dumps(obj, sort_keys=False, indent=4))
