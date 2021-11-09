@@ -283,16 +283,44 @@ class ChrisClient:
         match_dict = {}
         match_list = []
         match_dict['plugin_name'] = plugin_name
+
+        resource_count = 0
+        prev_resource = ''
         for resource in compute_resources:
             cmp_cpu = resource['cpus']
             cmp_gpu = resource['gpus']
             cmp_cost = resource['cost']
             cmp_mem = resource['memory']
             cmp_worker = resource['workers']
+            if cmp_cpu < min_cpu_limit:
+                if resource['name'] == prev_resource:
+                    match_list[resource_count][resource['name']]['message'].append('Not enough CPU')
+                else:
+                    match_list.append({resource['name']: {'fit': False, 'message': ['Not enough CPU']}})
+                    prev_resource = resource['name']
+            if cmp_gpu < min_gpu_limit:
+                if resource['name'] == prev_resource:
+                    match_list[resource_count][resource['name']]['message'].append('Not enough GPU')
+                else:
+                    match_list.append({resource['name']: {'fit': False, 'message': ['Not enough GPU']}})
+                    prev_resource = resource['name']
+            if cmp_mem < min_memory_limit:
+                if resource['name'] == prev_resource:
+                    match_list[resource_count][resource['name']]['message'].append('Not enough memory')
+                else:
+                    match_list.append({resource['name']: {'fit': False, 'message': ['Not enough memory']}})
+                    prev_resource = resource['name']
+            if cmp_worker < min_number_of_workers:
+                if resource['name'] == prev_resource:
+                    match_list[resource_count][resource['name']]['message'].append('Not enough worker')
+                else:
+                    match_list.append({resource['name']: {'fit': False, 'message': ['Not enough worker']}})
+                    prev_resource = resource['name']
             if cmp_cpu >= min_cpu_limit and cmp_gpu >= min_gpu_limit and cmp_mem >= min_memory_limit and cmp_worker >= min_number_of_workers:
                 match_list.append({resource['name']: {'fit': True}})
-            else:
-                match_list.append({resource['name']: {'fit': False}})
+            resource_count += 1
+            #else:
+            #    match_list.append({resource['name']: {'fit': False, 'message': 'Not enough cpu'}})
         match_dict['matching'] = match_list
 
         # print(json.dumps(match_dict, sort_keys=True, indent=4))
@@ -356,8 +384,6 @@ class ChrisClient:
             budget = amount of availiable cost that constrain the compute environment assignment
         output: a dictionary with list of compute environment assignment
         '''
-
-
         return_dict = {}
 
         ### 1. get all plug-in id from the given pipeline
@@ -498,6 +524,23 @@ class ChrisClient:
 
         return return_dict
 
+    def list_all_pipelines(self):
+        return_dict = {}
+        ### get pipeline json object from database
+        res = self._s.get(self.addr + 'pipelines')
+        res.raise_for_status()
+        data = res.json()
+        pipelines = data['results']
+        #pipeline_names = {'pipelines': []}
+        pipeline_names = {}
+        for pipeline in pipelines:
+            pipeline_name = pipeline['name']
+            pipeline_names[str(pipeline_name)] = pipeline
+            #pipeline_names['pipelines'].append(pipeline_name)
+        # print(json.dumps(plugin_names, sort_keys=True, indent=4))
+        return pipeline_names
+        #dict_plugin[plugin['name']] = plugin
+        #return data['results']
 
 
 

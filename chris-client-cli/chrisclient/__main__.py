@@ -22,7 +22,7 @@ import json
 @click.option('--username', default='chris', help='Username for ChRIS')
 @click.option('--password', default='chris1234',
               help='Password for ChRIS')
-@click.option('--address', default='http://'+ '128.31.26.131' +':8000/api/v1/', help='Address for ChRIS')
+@click.option('--address', default='http://'+ 'localhost' +':8000/api/v1/', help='Address for ChRIS')
 def main(context, username, password, address):
     context.ensure_object(dict)
     context.obj['client'] = ChrisClient(
@@ -158,6 +158,15 @@ def match_pipeline(context, match_type, pipeline_id, budget, env_list):
         print('Invalid match_type option')
         exit(-1)
 
+
+@main.command('list_all_pipelines')
+@click.pass_context
+def list_compute_resources(context):
+    '''
+    List all available the compute resources
+    '''
+    client = context.obj['client']
+    json_print(client.list_all_pipelines())
     
 
 # @click.option('--match_pipeline', nargs=2, type=(str, str), default=(None, 0),  help='given pipeline id, budget, match each plugin in that pipeline with best expected runtime')
