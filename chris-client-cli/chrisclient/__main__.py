@@ -132,7 +132,7 @@ def get_pipeline_details(context, pipeline_id):
 @click.argument('budget', required=False)
 @click.argument('env_list', required=False)
 # @click.argument('budget')
-def match_pipeline(context, match_type, pipeline_id, args):
+def match_pipeline(context, match_type, pipeline_id, budget, env_list):
     '''
     Pass in: pipeline_id, budget (money in USD)\n
     Output: match each plugin in that pipeline with best expected runtime
