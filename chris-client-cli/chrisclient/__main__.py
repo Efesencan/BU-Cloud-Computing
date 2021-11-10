@@ -22,6 +22,9 @@ import json
 @click.option('--username', default='chris', help='Username for ChRIS')
 @click.option('--password', default='chris1234',
               help='Password for ChRIS')
+
+# MOC ADDR: 128.31.26.131
+
 @click.option('--address', default='http://'+ '128.31.26.131' +':8000/api/v1/', help='Address for ChRIS')
 def main(context, username, password, address):
     context.ensure_object(dict)
