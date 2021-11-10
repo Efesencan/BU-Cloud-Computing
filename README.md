@@ -139,6 +139,7 @@ Minimum acceptance criteria is having an interface showing the details of the co
 [Demo 1](https://www.youtube.com/watch?v=kBIDokPnwpA)
 [Demo 2](https://youtu.be/AWViu7jEWxQ)
 [Demo 3](https://www.youtube.com/watch?v=9kYF9u7zSQE)
+[Demo 4](https://youtu.be/JFeoMwaWjpQ)
 
 ### Commands
 To bring up ChRIS Backend:
