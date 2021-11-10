@@ -513,8 +513,14 @@ class ChrisClient:
 
         return_dict = {}
         return_dict['status'] = 'OK'
-        return_dict['env selection'] = env_path
-
+        #return_dict['env selection'] = env_path
+        #print("plugin sequence: ", [plugin['plugin_name'] for plugin in data['plugin_list']])
+        match_list = []
+        for index,plugin in enumerate(data['plugin_list']):
+            temp_dict = {}
+            temp_dict[plugin['plugin_name']] = env_path[index]
+            match_list.append(temp_dict)
+        return_dict['match_result'] = match_list
         ### 3.2 traverse the rest of the path, 
         ###         if during the travsersal the cost exceed budget, skip it 
         ###         if during the travsersal the expected runtime exceed best path expected runtime, skip it 
