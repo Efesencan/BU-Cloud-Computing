@@ -169,7 +169,7 @@ def match_pipeline(context, match_type, pipeline_id, budget, env_list):
 
 @main.command('list_all_pipelines')
 @click.pass_context
-def list_compute_resources(context):
+def list_all_pipelines(context):
     '''
     List all available pipelines
     '''
