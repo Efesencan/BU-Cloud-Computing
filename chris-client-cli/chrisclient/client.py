@@ -267,7 +267,7 @@ class ChrisClient:
         #print(json.dumps(dict_plugin, sort_keys=True, indent=4))
         return dict_plugin
     
-    def check_plugin_compute_env(self, plugin_name):
+    def check_plugin_compute_env(self, plugin_name, summary=False):
         plugin_details = self.get_plugin_details(plugin_name = plugin_name)
         compute_addr = plugin_details[plugin_name]['compute_resources']
         min_cpu_limit = plugin_details[plugin_name]['min_cpu_limit']
@@ -286,37 +286,44 @@ class ChrisClient:
 
         resource_count = 0
         prev_resource = ''
+        pass_count = 0
         for resource in compute_resources:
             cmp_cpu = resource['cpus']
             cmp_gpu = resource['gpus']
             cmp_cost = resource['cost']
             cmp_mem = resource['memory']
             cmp_worker = resource['workers']
+            fail_count = 0
             if cmp_cpu < min_cpu_limit:
+                fail_count = fail_count + 1
                 if resource['name'] == prev_resource:
                     match_list[resource_count][resource['name']]['message'].append('Not enough CPU')
                 else:
                     match_list.append({resource['name']: {'fit': False, 'message': ['Not enough CPU']}})
                     prev_resource = resource['name']
             if cmp_gpu < min_gpu_limit:
+                fail_count = fail_count + 1
                 if resource['name'] == prev_resource:
                     match_list[resource_count][resource['name']]['message'].append('Not enough GPU')
                 else:
                     match_list.append({resource['name']: {'fit': False, 'message': ['Not enough GPU']}})
                     prev_resource = resource['name']
             if cmp_mem < min_memory_limit:
+                fail_count = fail_count + 1
                 if resource['name'] == prev_resource:
                     match_list[resource_count][resource['name']]['message'].append('Not enough memory')
                 else:
                     match_list.append({resource['name']: {'fit': False, 'message': ['Not enough memory']}})
                     prev_resource = resource['name']
             if cmp_worker < min_number_of_workers:
+                fail_count = fail_count + 1
                 if resource['name'] == prev_resource:
                     match_list[resource_count][resource['name']]['message'].append('Not enough worker')
                 else:
                     match_list.append({resource['name']: {'fit': False, 'message': ['Not enough worker']}})
                     prev_resource = resource['name']
             if cmp_cpu >= min_cpu_limit and cmp_gpu >= min_gpu_limit and cmp_mem >= min_memory_limit and cmp_worker >= min_number_of_workers:
+                pass_count = pass_count + 1
                 match_list.append({resource['name']: {'fit': True}})
             resource_count += 1
             #else:
@@ -324,7 +331,37 @@ class ChrisClient:
         match_dict['matching'] = match_list
 
         # print(json.dumps(match_dict, sort_keys=True, indent=4))
+        if summary == True:
+            return match_dict, (pass_count > 0)
         return match_dict
+
+    def check_pipeline_compute_env(self, pipeline_id, env_list=None):
+        res = self._s.get(self.addr + 'pipelines/' + str(pipeline_id))
+        res.raise_for_status()
+        data = res.json()
+
+        res = self._s.get(data['plugins'])
+        res.raise_for_status()
+        data = res.json()
+        plugin_list = data['results']
+        return_dict = {}
+        total_pass = True
+        fail_plugin = []
+        detail_list = []
+        for plugin in plugin_list:
+            # print(plugin['name'])
+            detail, pass_check = self.check_plugin_compute_env(plugin_name = plugin['name'], summary=True)
+            ### total_pass will fail if only one of plugin fail to run
+            detail_list.append(detail)
+            if pass_check == False:
+                fail_plugin = detail["plugin_name"]
+            total_pass = total_pass and pass_check
+
+        return_dict["fit"] = total_pass
+        return_dict["fail case"] = fail_plugin
+        return_dict["details"] = detail_list
+        return return_dict
+
 
     def get_pipeline_details(self, pipeline_id: int):
         return_dict = {}
@@ -409,7 +446,7 @@ class ChrisClient:
             for i, env in enumerate(compute_resources):
                 expected_runtime = 100 # this should be changed to input size
                 ### need to change how we calculate expected_runtime
-                expected_runtime = expected_runtime / env['cpus']
+                expected_runtime = expected_runtime / (env['cpus']+0.001)
                 ###
                 runtime_dict[plugin['plugin_id']][env['name']] = expected_runtime
                 runtime_dict[plugin['plugin_id']][i] = expected_runtime
@@ -458,8 +495,8 @@ class ChrisClient:
         pos[count+i+1] = (math.ceil(count/num_env)+1,0)
         count = count + num_env
         ### use next 2 lines to print what's the network looks like
-        # nx.draw(G, pos=pos)
-        # plt.show()
+        nx.draw(G, pos=pos)
+        plt.show()
         ### 3.1 calculate all possible path
         best_path_time = -1
         best_path_cost = -1
@@ -543,7 +580,16 @@ class ChrisClient:
             pipeline_names[str(pipeline_name)] = pipeline
         return pipeline_names
 
-
+    def pipeline_name_to_id(self, pipeline_name:str):
+        res = self._s.get(self.addr + 'pipelines')
+        res.raise_for_status()
+        data = res.json()
+        pipelines = data['results']
+        for pipeline in pipelines:
+            if pipeline_name == pipeline['name']:
+                return pipeline['id']
+        print("Cannot not convert pipeline_name to id")
+        exit(-1)
 
 
 
