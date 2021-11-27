@@ -1,0 +1,179 @@
+@import "../../../assets/scss/helpers/pf4-variables";
+@import "../../../assets/scss/helpers/variables";
+@import "../../../assets/scss/helpers/mixins";
+
+.feed-output-browser {
+  height: 100%;
+
+  &__sidebar {
+    @include media-query($pf-global--breakpoint--xs) {
+      display: none;
+    }
+
+    @include media-query($pf-global--breakpoint--sm) {
+      display: block;
+    }
+
+    overflow-y: auto;
+    border-right: 0.5px solid #f5f5f5;
+  }
+
+  .pf-c-skeleton,
+  .pf-m-square {
+    background-color: var(--pf-global--palette--black-300) !important;
+  }
+
+  .ant-tree {
+    background-color: inherit !important;
+  }
+}
+
+.file-browser {
+  height: 100%;
+  &__downloadButton {
+    max-width: 50% !important;
+    @include media-query(768px) {
+      max-width: 80 !important;
+    }
+
+    svg {
+      fill: white;
+    }
+  }
+
+  &__table {
+    padding-right: 0 !important;
+    &--fileName {
+      display: flex;
+      flex-direction: row;
+      border: 1px solid transparent;
+      border-radius: 5px;
+      outline: none;
+      font-size: 1em !important;
+      font-family: var(
+        --pf-global--FontFamily--redhatfont--sans-serif
+      ) !important;
+    }
+
+    tr > *:first-child {
+      padding: 0;
+      text-align: right;
+    }
+
+    .pf-m-truncate {
+      padding-left: 0 !important;
+    }
+
+    &--isPreviewing {
+      background: var(--pf-global--palette--blue-300);
+      color: white;
+      svg {
+        color: white !important;
+      }
+    }
+  }
+
+  &__header {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25em;
+    margin-right: 0.25em;
+
+    &--crumb {
+      color: var(--pf-global--primary-color--100);
+    }
+
+    &__info {
+      gap: 2rem;
+      display: flex;
+      justify-content: flex-end;
+    }
+
+    @include media-query($pf-global--breakpoint--xl) {
+      display: flex;
+    }
+  }
+
+  .pf-c-breadcrumb {
+    cursor: pointer;
+    --pf-c-breadcrumb__item--FontSize: var(--pf-global--FontSize--md);
+  }
+
+  &__firstGrid {
+    overflow-y: scroll !important;
+    height: 100% !important;
+    border-right: 0.2px solid #f5f5f5;
+    max-width: 100%;
+    tbody tr {
+      cursor: pointer;
+    }
+
+    svg {
+      color: var(--pf-global--primary-color--100);
+      margin-right: 0.25em;
+    }
+
+    .pf-c-table {
+      background-color: inherit;
+    }
+  }
+
+  .header-panel__buttons--togglePanel button span.pf-c-button__icon {
+    margin-right: 0px;
+  }
+
+  .header-panel__buttons {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 0.25em;
+    margin-right: 0.25em;
+
+    button {
+      padding: 5px auto;
+    }
+  }
+
+  .small-preview {
+    height: 90%;
+
+    .viewport-wrapper {
+      height: 100% !important;
+    }
+    img {
+      height: 100%;
+    }
+
+    .react-json-view {
+      height:100%;
+      overflow: scroll;
+    }
+  }
+
+  .dcm-preview {
+    position: relative;
+    height: 100%;
+
+    #container {
+      bottom: 0;
+      height: 100%;
+      left: 0;
+      overflow: hidden;
+      position: absolute;
+      right: 0;
+      top: 0;
+      width: 100%;
+    }
+  }
+
+  .open-with-dropdown {
+    background: #ffffff63;
+  }
+}
+
+.iframe-container {
+  height: 100%;
+
+  iframe {
+    height: 100% !important;
+  }
+}

@@ -1,0 +1,148 @@
+/*
+*  File:            feed.scss
+*  Description:     This files holds styles specific for the Feed view page
+*  Author:          ChRIS UI
+*/
+
+@import "../../assets/scss/abstracts/colors";
+@import "../../assets/scss/helpers/mixins";
+@import "../../assets/scss/helpers/pf4-variables";
+
+.feed-header {
+  padding-top: 0.5rem !important;
+  padding-bottom: 0.5em !important;
+
+  &__split {
+    display: flex;
+    justify-content: space-between;
+  }
+
+  .pf-c-title {
+    display: inline-block;
+    margin-top: 0.5rem;
+  }
+
+  &__count {
+    color: var(--pf-global--Color-200);
+    font-weight: var(--fw-normal);
+    margin-left: 0.25em;
+  }
+}
+
+.feed-list {
+  .pf-c-table {
+    --pf-c-table-tbody-cell--PaddingTop: 1rem;
+    --pf-c-table-tbody-cell--PaddingBottom: 1rem;
+    margin-bottom: 1rem;
+  }
+
+  thead {
+    background-color: var(--pf-global--palette--black-100);
+  }
+
+  &__count {
+    margin-left: 1.25em;
+    display: block;
+  }
+
+  .error {
+    background-color: red;
+  }
+
+  &__split {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  &__name {
+    a {
+      margin-left: 0.25em;
+    }
+    cursor: pointer;
+    outline: none;
+  }
+
+  td:last-child {
+    padding-right: 0;
+    padding-left: 0;
+  }
+}
+
+.section-one {
+  padding: 0 1em !important;
+
+  @include media-query($pf-global--breakpoint--xl2) {
+    height: 5vh;
+  }
+}
+
+.section-two {
+  @include media-query($pf-global--breakpoint--sm) {
+    height: auto;
+  }
+  @include media-query($pf-global--breakpoint--md) {
+    height: 45vh;
+  }
+
+  @include media-query($pf-global--breakpoint--lg) {
+    height: 40vh;
+    .pf-c-drawer.pf-m-inline > .pf-c-drawer__main > .pf-c-drawer__content {
+      overflow: hidden 
+    }
+  }
+
+  @include media-query($pf-global--breakpoint--xl) {
+    height: 40vh;
+  }
+}
+
+.section-three {
+  @include media-query($pf-global--breakpoint--sm) {
+    height: auto;
+  }
+
+  @include media-query($pf-global--breakpoint--md) {
+    height: 45vh;
+  }
+
+  @include media-query($pf-global--breakpoint--lg) {
+    height: 45vh;
+  }
+
+  @include media-query($pf-global--breakpoint--xl2) {
+    height: 45vh;
+  }
+
+  background: #d2d2d2 !important;
+  padding-right: 0 !important;
+  padding-top: 0.5rem !important;
+}
+
+.pf-c-drawer__splitter {
+  background-color: var(
+    --pf-c-page__main-section--m-dark-100--BackgroundColor
+  ) !important;
+
+  &-handle::after {
+    border-color: white !important;
+  }
+}
+
+.feed-block {
+  background: $tree-node-backgound;
+  height: 100%;
+}
+
+.node-block {
+  padding: 0.5em;
+}
+
+#feed-list {
+  .pf-l-split__item {
+    display: flex;
+    span, div {
+      margin: auto 0;
+    }
+  }
+}

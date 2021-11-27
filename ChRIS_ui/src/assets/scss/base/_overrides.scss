@@ -1,0 +1,10 @@
+/*
+*  File:            _overrides.scss
+*  Description:     This file holds styles for overriding patternfly 4
+*                   
+*  Author:          ChRIS UI
+*/
+
+input:focus, textarea:focus, select:focus{
+  outline: none !important;
+}
