@@ -1,3 +1,5 @@
+import client
+import logging
 
 from rest_framework import generics
 from rest_framework import permissions
@@ -31,6 +33,8 @@ class PluginInstanceList(generics.ListCreateAPIView):
     queryset = Plugin.objects.all()
     permission_classes = (permissions.IsAuthenticated,)
 
+    logger = logging.getLogger(__name__)
+
     def create(self, request, *args, **kwargs):
         """
         Overriden to remove descriptors from the request that must take their default
@@ -43,8 +47,8 @@ class PluginInstanceList(generics.ListCreateAPIView):
 
     def perform_create(self, serializer):
         """
-        Overriden to associate an owner, a plugin and a previous plugin instance with 
-        the newly created plugin instance before first saving to the DB. All the plugin 
+        Overriden to associate an owner, a plugin and a previous plugin instance with
+        the newly created plugin instance before first saving to the DB. All the plugin
         instance's parameters in the request are also properly saved to the DB. Finally
         the plugin's app is run with the provided plugin instance's parameters.
         """
@@ -80,7 +84,13 @@ class PluginInstanceList(generics.ListCreateAPIView):
         # if no validation errors at this point then save to the DB
         cr_data = serializer.validated_data.get('compute_resource')
         if cr_data:
-            compute_resource = plugin.compute_resources.get(name=cr_data['name'])
+            if cr_data['name'] == 'auto':
+                self.logger.debug("=========check name==========")
+                self.logger.debug(serializer.validated_data.get('plugin_name'))
+                name = self.call_client(plugin)
+                compute_resource = plugin.compute_resources.get(name=name)
+            else:
+                compute_resource = plugin.compute_resources.get(name=cr_data['name'])
         else:
             compute_resource = plugin.compute_resources.first()
         plg_inst = serializer.save(owner=user, plugin=plugin, previous=previous,
@@ -131,6 +141,20 @@ class PluginInstanceList(generics.ListCreateAPIView):
         """
         plugin = self.get_object()
         return self.filter_queryset(plugin.instances.all())
+
+    def call_client(self, plugin):
+
+        c = client.ChrisClient(
+            address='http://localhost:8000/api/v1/',
+            username='chris',
+            password='chris1234'
+        )
+        print("======= call_client ========")
+        print(plugin.parameters.all())
+        self.logger.debug("=======(log) call_client ========")
+        self.logger.debug(plugin.parameters.all())
+        # print(plugin.parameters.all())
+        c.check_plugin_compute_env(plugin.parameters.all())
 
 
 class AllPluginInstanceList(generics.ListAPIView):
