@@ -55,8 +55,7 @@ const ComputeEnvironment: React.FC<ComputeProp> = ({
       setComputeEnvironment(id);
     }
   };
-
-  const menuItems = computeEnvs.map((computeEnv) => {
+  const environs = computeEnvs.map((computeEnv) => {
     return (
       <OptionsMenuItem
         className="configure-compute__optionsmenuitem"
@@ -69,6 +68,19 @@ const ComputeEnvironment: React.FC<ComputeProp> = ({
       </OptionsMenuItem>
     );
   });
+  const autoEnv = 
+      (<OptionsMenuItem
+        className="configure-compute__optionsmenuitem"
+        onSelect={onSelect}
+        isSelected={selectedOption === "auto"}
+        id="auto"
+        key="auto"
+      >
+        auto
+      </OptionsMenuItem>
+    );
+
+  const menuItems = [environs, autoEnv];
   const toggle = (
     <OptionsMenuToggle
       onToggle={onToggle}
