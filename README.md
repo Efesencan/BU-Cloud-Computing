@@ -19,6 +19,8 @@ Plugins for ChRIS are mostly written in Python with operational variables like n
    *  determine a compute resource's environment programatically   
    *  view the plug-in / pipeline’s operational variables/compute resources from the front end
    *  optimize a pipeline for cost, or speed and report the correct compute resources required
+
+ * Add a UI element to ChRIS_ui to automatically choose a compute resource for a single plugin
  
 
 * Enable users to determine whether the remote environment satisfies the spec of the computational requirements of the computing pipeline requested by the users
@@ -64,6 +66,7 @@ This project targets:
 * The command line application should be able compute environment given the cost or speed function. 
 
 * The backend should be able to feed via the REST API, the descriptor for any compute resource.
+* The frontend should contain an "auto" compute environment that programmatically chooses the best environment for a plugin.
 
 # Not Guaranteed:
 
@@ -126,10 +129,11 @@ Minimum acceptance criteria is having an interface showing the details of the co
 ### Release 4 (by week 11): 
 * Finish developing a basic command line application to get a pipeline's pluging and their computer resources
 * Develop cost / speed functions for integration
-
-### Release 5 (by week 13): 
 * Finish the command line application by integrating cost/speed optimization
 * Testing and prep for release
+
+### Release 5 (by week 13): 
+* Integrate the client into the ChRIS Frontend
 
 ### Final Release (by week 15):
 * Deploy and release the product.
