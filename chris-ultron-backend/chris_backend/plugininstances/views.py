@@ -1,4 +1,4 @@
-import client
+from plugininstances.client import ChrisClient
 import logging
 
 from rest_framework import generics
@@ -85,10 +85,21 @@ class PluginInstanceList(generics.ListCreateAPIView):
         cr_data = serializer.validated_data.get('compute_resource')
         if cr_data:
             if cr_data['name'] == 'auto':
+                plugin_name = serializer.validated_data.get('plugin_name')
+                self.logger.debug(type(cr_data['name']))
                 self.logger.debug("=========check name==========")
-                self.logger.debug(serializer.validated_data.get('plugin_name'))
-                name = self.call_client(plugin)
-                compute_resource = plugin.compute_resources.get(name=name)
+                self.logger.debug(type(plugin))
+                self.logger.debug(plugin)
+                # self.logger.debug(plugin.name)
+                self.logger.debug("=========check title==========")
+                self.logger.debug(serializer.validated_data.get('title'))
+                compute_name = self.call_client(str(plugin))
+                self.logger.debug("=========check compute env name==========")
+                self.logger.debug(compute_name)
+                if compute_name is None:
+                    raise ValidationError("No compute resources that match minimum plugin (%s) requirement" % plugin_name)
+                self.logger.debug("=========requirement check passed==========")
+                compute_resource = plugin.compute_resources.get(name=compute_name)
             else:
                 compute_resource = plugin.compute_resources.get(name=cr_data['name'])
         else:
@@ -142,19 +153,25 @@ class PluginInstanceList(generics.ListCreateAPIView):
         plugin = self.get_object()
         return self.filter_queryset(plugin.instances.all())
 
-    def call_client(self, plugin):
+    def call_client(self, plugin_name):
 
-        c = client.ChrisClient(
+        c = ChrisClient(
             address='http://localhost:8000/api/v1/',
             username='chris',
             password='chris1234'
         )
-        print("======= call_client ========")
-        print(plugin.parameters.all())
         self.logger.debug("=======(log) call_client ========")
-        self.logger.debug(plugin.parameters.all())
+        self.logger.debug(plugin_name)
+        self.logger.debug(type(c))
         # print(plugin.parameters.all())
-        c.check_plugin_compute_env(plugin.parameters.all())
+
+        match_dict, check = c.check_plugin_compute_env(plugin_name, summary=True)
+        self.logger.debug(match_dict)
+        if check == False:
+            return None
+        compute_env = c.get_rec_compute_env(plugin_name)
+        return compute_env
+        
 
 
 class AllPluginInstanceList(generics.ListAPIView):

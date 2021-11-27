@@ -8,6 +8,7 @@ django-storage-swift==1.2.19
 celery==5.1.2
 django-celery-beat==2.2.0
 mod-wsgi==4.8.0
+networkx==2.6.3
 environs==9.3.2
 python-chrisstoreclient==1.0.0
 python-pfconclient==2.2.0

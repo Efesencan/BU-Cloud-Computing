@@ -3,13 +3,11 @@ from click import exceptions
 import requests
 from typing import Optional, Set, Union, Dict
 import json
-import client
 
-from .models import PluginInstance, Plugin, Pipeline, UploadedFiles, Feed, ComputeResource
+from .cli_models import PluginInstance, Plugin, Pipeline, UploadedFiles, Feed, ComputeResource
 
 import networkx as nx
 ### for debugging
-import matplotlib.pyplot as plt
 import math
 class ChrisClientError(Exception):
     pass
@@ -496,8 +494,8 @@ class ChrisClient:
         pos[count+i+1] = (math.ceil(count/num_env)+1,0)
         count = count + num_env
         ### use next 2 lines to print what's the network looks like
-        nx.draw(G, pos=pos)
-        plt.show()
+        # nx.draw(G, pos=pos)
+        # plt.show()
         ### 3.1 calculate all possible path
         best_path_time = -1
         best_path_cost = -1
@@ -592,5 +590,12 @@ class ChrisClient:
         print("Cannot not convert pipeline_name to id")
         exit(-1)
 
-    
+    def get_rec_compute_env(self, plugin_name):
+        """
+            get plugin_name
+
+        """
+        ### TO DO
+        return "host"
+
 
