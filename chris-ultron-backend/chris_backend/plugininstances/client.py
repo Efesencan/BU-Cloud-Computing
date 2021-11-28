@@ -287,6 +287,9 @@ class ChrisClient:
         prev_resource = ''
         pass_count = 0
         for resource in compute_resources:
+            if resource['name'] == 'auto':
+                # don't check against 'auto' option
+                continue
             cmp_cpu = resource['cpus']
             cmp_gpu = resource['gpus']
             cmp_cost = resource['cost']
