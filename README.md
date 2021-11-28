@@ -152,6 +152,7 @@ docker swarm leave --force &&
 docker swarm init --advertise-addr 127.0.0.1 &&                           
 ./unmake.sh ; sudo rm -fr CHRIS_REMOTE_FS; rm -fr CHRIS_REMOTE_FS; ./make.sh -U -I
 ```
-
-
-
+To bring up ChRIS Frontend: (Assuming that backend is running at http://localhost:8000/api/v1/) 
+```
+docker run --rm -d --name chris_ui -p 3000:3000 -e REACT_APP_CHRIS_UI_URL=http://localhost:8000/api/v1/ ghcr.io/fnndsc/chris_ui:latest
+```
