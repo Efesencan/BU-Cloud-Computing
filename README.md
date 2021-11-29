@@ -156,3 +156,10 @@ To bring up ChRIS Frontend: (Assuming that backend is running at http://localhos
 ```
 docker run --rm -d --name chris_ui -p 3000:3000 -e REACT_APP_CHRIS_UI_URL=http://localhost:8000/api/v1/ ghcr.io/fnndsc/chris_ui:latest
 ```
+If you update chris-client and want to see the changes:
+- Make sure you are in the ./chris-client-cli:
+```
+bash uninstall.sh
+sudo bash install.sh
+pip install .
+```
