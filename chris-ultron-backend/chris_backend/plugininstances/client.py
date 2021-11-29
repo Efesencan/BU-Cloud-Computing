@@ -286,6 +286,7 @@ class ChrisClient:
         resource_count = 0
         prev_resource = ''
         pass_count = 0
+        pass_list = []
         for resource in compute_resources:
             if resource['name'] == 'auto':
                 # don't check against 'auto' option
@@ -327,14 +328,24 @@ class ChrisClient:
             if cmp_cpu >= min_cpu_limit and cmp_gpu >= min_gpu_limit and cmp_mem >= min_memory_limit and cmp_worker >= min_number_of_workers:
                 pass_count = pass_count + 1
                 match_list.append({resource['name']: {'fit': True}})
+                pass_list.append(resource['name'])
             resource_count += 1
             #else:
             #    match_list.append({resource['name']: {'fit': False, 'message': 'Not enough cpu'}})
         match_dict['matching'] = match_list
 
         # print(json.dumps(match_dict, sort_keys=True, indent=4))
+        # print("building message")
+        message = ""
+        # print(json.dumps(compute_resources, sort_keys=True, indent=4))
         if summary == True:
-            return match_dict, (pass_count > 0)
+            # for index, resource in enumerate(compute_resources):
+            #     print("message = %s" %  match_list[index][resource['name']]['message'])
+            #     # message = message + "%s : %s\n" % (resource, match_list[index][resource['name']]['message'])
+            #     print("index = %s" %  index)
+            # message = match_dict['matching']
+            message = json.dumps(match_dict['matching'], sort_keys=True, indent=4)
+            return match_dict, (pass_count > 0), message, pass_list
         return match_dict
 
     def check_pipeline_compute_env(self, pipeline_id, env_list=None):
@@ -593,7 +604,7 @@ class ChrisClient:
         print("Cannot not convert pipeline_name to id")
         exit(-1)
 
-    def get_rec_compute_env(self, plugin_name):
+    def get_rec_compute_env(self, plugin_name, passed_env_list):
         """
             get plugin_name
 
@@ -608,7 +619,7 @@ class ChrisClient:
 
         best_path_time = -1
         for i, env in enumerate(compute_resources):
-            if env['name'] != 'auto':
+            if env['name'] != 'auto' and env['name'] in passed_env_list:
                 expected_runtime = 100 # this should be changed to input size
                 ### need to change how we calculate expected_runtime
                 expected_runtime = expected_runtime / (env['cpus']+0.001)

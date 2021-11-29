@@ -93,11 +93,12 @@ class PluginInstanceList(generics.ListCreateAPIView):
                 # self.logger.debug(plugin.name)
                 self.logger.debug("=========check title==========")
                 self.logger.debug(serializer.validated_data.get('title'))
-                compute_name = self.call_client(str(plugin))
-                self.logger.debug("=========check compute env name==========")
+                # self.logger.debug(self.call_client(str(plugin)))
+                compute_name, message = self.call_client(str(plugin))
+                self.logger.debug("=========check rec. compute env name==========")
                 self.logger.debug(compute_name)
                 if compute_name is None:
-                    raise ValidationError("No compute resources that match minimum plugin (%s) requirement" % plugin_name)
+                    raise ValidationError("No compute resources that match minimum plugin (%s) requirement\n %s" % (str(plugin), message))
                 self.logger.debug("=========requirement check passed==========")
                 compute_resource = plugin.compute_resources.get(name=compute_name)
             else:
@@ -165,12 +166,17 @@ class PluginInstanceList(generics.ListCreateAPIView):
         self.logger.debug(type(c))
         # print(plugin.parameters.all())
 
-        match_dict, check = c.check_plugin_compute_env(plugin_name, summary=True)
-        self.logger.debug(match_dict)
+        match_dict, check, message, pass_list = c.check_plugin_compute_env(plugin_name, summary=True)
+        self.logger.debug("=======call_client : returning from req check========")
+        # self.logger.debug(match_dict)
+        self.logger.debug(check)
+        self.logger.debug(message)
+        self.logger.debug(pass_list)
         if check == False:
-            return None
-        compute_env = c.get_rec_compute_env(plugin_name)
-        return compute_env
+            return None, str(message)
+        compute_env = c.get_rec_compute_env(plugin_name, pass_list)
+        # message = match_dict['']
+        return compute_env, str(message)
         
 
 
