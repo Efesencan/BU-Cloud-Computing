@@ -315,7 +315,7 @@ class ChrisClient:
             if cmp_mem < min_memory_limit:
                 fail_count = fail_count + 1
                 message = "Requested " + str(min_memory_limit) + "MB's memory but there are only " + str(cmp_mem) + \
-                          " MBs in comp env"
+                          " MBs in comp resource"
                 if resource['name'] == prev_resource:
                     match_list[resource_count][resource['name']]['message'].append(message)
                 else:
