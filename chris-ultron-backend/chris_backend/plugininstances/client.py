@@ -299,9 +299,8 @@ class ChrisClient:
             fail_count = 0
             if cmp_cpu < min_cpu_limit:
                 fail_count = fail_count + 1
-                message = "Requested " + str(min_cpu_limit) + " CPU's but there are only " + str(
-                    cmp_cpu) + " CPUs in compute " \
-                               "resource"
+                message = "str(min_cpu_limit) + " CPU's but str(
+                    cmp_cpu) + " CPUs available"
                 if resource['name'] == prev_resource:
                     match_list[resource_count][resource['name']]['message'].append(message)
                 else:
@@ -309,9 +308,8 @@ class ChrisClient:
                     prev_resource = resource['name']
             if cmp_gpu < min_gpu_limit:
                 fail_count = fail_count + 1
-                message = "Requested " + str(min_gpu_limit) + " GPU's but there are only " + str(
-                    cmp_gpu) + " GPUs in compute " \
-                               "resource"
+                message = "str(min_gpu_limit) + " GPU's but str(
+                    cmp_gpu) + " GPUs available"
                 if resource['name'] == prev_resource:
                     match_list[resource_count][resource['name']]['message'].append(message)
                 else:
@@ -319,8 +317,8 @@ class ChrisClient:
                     prev_resource = resource['name']
             if cmp_mem < min_memory_limit:
                 fail_count = fail_count + 1
-                message = "Requested " + str(min_memory_limit) + "MB's memory but there are only " + str(cmp_mem) + \
-                          " MBs in comp resource"
+                message = "str(min_memory_limit) + "MB's memory but " + str(cmp_mem) + \
+                          " MBs available"
                 if resource['name'] == prev_resource:
                     match_list[resource_count][resource['name']]['message'].append(message)
                 else:
@@ -328,8 +326,8 @@ class ChrisClient:
                     prev_resource = resource['name']
             if cmp_worker < min_number_of_workers:
                 fail_count = fail_count + 1
-                message = "Requested " + str(min_number_of_workers) + " workers but there are only " + str(cmp_worker) + \
-                          " workers in compute resource"
+                message = "str(min_number_of_workers) + " workers only " + str(cmp_worker) + \
+                          " workers available"
                 if resource['name'] == prev_resource:
                     match_list[resource_count][resource['name']]['message'].append(message)
                 else:
