@@ -608,7 +608,7 @@ class ChrisClient:
         print("Cannot not convert pipeline_name to id")
         exit(-1)
 
-    def get_rec_compute_env(self, plugin_name, passed_env_list):
+    def get_rec_compute_env(self, plugin_name, passed_env_list, budget):
         """
             get plugin_name
 
@@ -629,7 +629,7 @@ class ChrisClient:
                 expected_runtime = expected_runtime / (env['cpus']+0.001)
 
                 ### get best time
-                if expected_runtime < best_path_time or best_path_time == -1:
+                if (expected_runtime < best_path_time and env['cost'] <= budget) or best_path_time == -1:
                     best_path_time = expected_runtime
                     best_env = env['name']
             
