@@ -105,7 +105,7 @@ class PluginInstanceList(generics.ListCreateAPIView):
                         key = cr.keys()
                         for m in cr.values():
                             msg = msg.join(m["message"])
-                        error = ''.join([error, f"{list(key)[0]}: plugin requires: {msg}\n"])
+                        error = ''.join([error, f"{list(key)[0].upper()}: plugin requires: {msg}\n"])
                     raise ValidationError("No compute resources that match minimum plugin (%s) requirement\n %s" % (str(plugin), error))
                 self.logger.debug("=========requirement check passed==========")
                 compute_resource = plugin.compute_resources.get(name=compute_name)
