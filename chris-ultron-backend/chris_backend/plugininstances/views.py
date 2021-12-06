@@ -84,7 +84,7 @@ class PluginInstanceList(generics.ListCreateAPIView):
         # if no validation errors at this point then save to the DB
         cr_data = serializer.validated_data.get('compute_resource')
         if cr_data:
-            if cr_data['name'] == 'auto':
+            if cr_data['name'] == 'auto_free' or cr_data['name'] == 'auto_best' :
                 plugin_name = serializer.validated_data.get('plugin_name')
                 self.logger.debug(type(cr_data['name']))
                 self.logger.debug("=========check name==========")
@@ -94,7 +94,10 @@ class PluginInstanceList(generics.ListCreateAPIView):
                 self.logger.debug("=========check title==========")
                 self.logger.debug(serializer.validated_data.get('title'))
                 # self.logger.debug(self.call_client(str(plugin)))
-                compute_name, message = self.call_client(str(plugin))
+                if cr_data['name'] == 'auto_best':
+                  compute_name, message = self.call_client(str(plugin), budget=1000000)
+                elif cr_data['name'] == 'auto_free':
+                  compute_name, message = self.call_client(str(plugin), budget=0)
                 self.logger.debug("=========check rec. compute env name==========")
                 self.logger.debug(compute_name)
                 if compute_name is None:
@@ -162,7 +165,7 @@ class PluginInstanceList(generics.ListCreateAPIView):
         plugin = self.get_object()
         return self.filter_queryset(plugin.instances.all())
 
-    def call_client(self, plugin_name):
+    def call_client(self, plugin_name, budget):
 
         c = ChrisClient(
             address='http://localhost:8000/api/v1/',
@@ -182,7 +185,7 @@ class PluginInstanceList(generics.ListCreateAPIView):
         self.logger.debug(pass_list)
         if check == False:
             return None, str(message)
-        compute_env = c.get_rec_compute_env(plugin_name, pass_list)
+        compute_env = c.get_rec_compute_env(plugin_name, pass_list, budget)
         # message = match_dict['']
         return compute_env, str(message)
         
