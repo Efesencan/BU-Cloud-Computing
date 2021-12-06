@@ -1,6 +1,6 @@
 from plugininstances.client import ChrisClient
 import logging
-
+import json
 from rest_framework import generics
 from rest_framework import permissions
 from rest_framework.reverse import reverse
@@ -98,7 +98,15 @@ class PluginInstanceList(generics.ListCreateAPIView):
                 self.logger.debug("=========check rec. compute env name==========")
                 self.logger.debug(compute_name)
                 if compute_name is None:
-                    raise ValidationError("No compute resources that match minimum plugin (%s) requirement\n %s" % (str(plugin), message))
+                    error = ""
+                    message = json.loads(message)
+                    for cr in message:
+                        msg = " "
+                        key = cr.keys()
+                        for m in cr.values():
+                            msg = msg.join(m["message"])
+                        error = ''.join([error, f"{list(key)[0]}: plugin requires: {msg}\n"])
+                    raise ValidationError("No compute resources that match minimum plugin (%s) requirement\n %s" % (str(plugin), error))
                 self.logger.debug("=========requirement check passed==========")
                 compute_resource = plugin.compute_resources.get(name=compute_name)
             else:
