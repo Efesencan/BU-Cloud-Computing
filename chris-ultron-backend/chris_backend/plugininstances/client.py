@@ -288,7 +288,7 @@ class ChrisClient:
         pass_count = 0
         pass_list = []
         for resource in compute_resources:
-            if resource['name'] == 'auto' or 'auto_free' or 'auto_budget':
+            if resource['name'] in ['auto', 'auto_free', 'auto_budget']:
                 # don't check against 'auto' option
                 continue
             cmp_cpu = resource['cpus']
