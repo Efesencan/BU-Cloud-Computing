@@ -112,6 +112,7 @@ class PluginInstanceList(generics.ListCreateAPIView):
                     raise ValidationError(
                         "No compute resources that match minimum plugin (%s) requirement\n %s" % (str(plugin), error))
                 self.logger.debug("=========requirement check passed==========")
+                self.logger.debug(f"Compute Resource Chosen: {compute_name}")
                 compute_resource = plugin.compute_resources.get(name=compute_name)
                 self.logger.debug("=========done==========")
             else:
