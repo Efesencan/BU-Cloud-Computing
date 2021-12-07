@@ -923,10 +923,10 @@ class ChrisClient:
         best_path_time = -1
         for i, env in enumerate(compute_resources):
             if env['name'] not in ['auto', 'auto_free', 'auto_budget'] and env['name'] in passed_env_list:
-                expected_runtime = 100  # this should be changed to input size
+                expected_runtime = 1000  # this should be changed to input size
                 ### need to change how we calculate expected_runtime
-                expected_runtime = expected_runtime / (env['cpus'] + 0.001)
-
+                expected_runtime = expected_runtime / (env['cpus']*env['cpu_clock_speed_ghz'] + 0.001)
+                    
                 ### get best time
                 if (expected_runtime < best_path_time or best_path_time == -1) and env['cost'] <= budget:
                     best_path_time = expected_runtime
