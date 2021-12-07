@@ -936,7 +936,7 @@ class ChrisClient:
                 if min_gpu_limit == 0:
                     expected_runtime = expected_runtime / (env['cpus']*env['cpu_clock_speed_ghz'] + 0.2 * ((env['memory']) / min_memory_limit) + 0.001)
                 else:
-                    expected_runtime = expected_runtime / (env['cpus']*env['cpu_clock_speed_ghz'] + 0.2 * ((env['memory']) / min_memory_limit) + 0.1 * (env['gpus'] / min_gpu_limit)  + 0.001)
+                    expected_runtime = expected_runtime / (env['cpus']*env['cpu_clock_speed_ghz'] + 0.2 * ((env['memory']) / min_memory_limit) + 0.5 * env['gpus']   + 0.001)
                     
                 ### get best time
                 if (expected_runtime < best_path_time or best_path_time == -1) and env['cost'] <= budget:
