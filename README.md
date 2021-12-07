@@ -1,6 +1,6 @@
 # Enabling Real-world Medical Compute Workflows on the Cloud (and others) to aid in Clinical Decision Making
 
-# Current Code is in: testsite
+# Current Code is in: main
 ## Team Members:
 * Efe Sencan (esencan@bu.edu)
 * Haoxuan(Harry) Li (harryli@bu.edu)
