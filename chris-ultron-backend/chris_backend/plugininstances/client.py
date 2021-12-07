@@ -4,7 +4,7 @@ import requests
 from typing import Optional, Set, Union, Dict
 import json
 
-from cli_models import PluginInstance, Plugin, Pipeline, UploadedFiles, Feed, ComputeResource
+from .cli_models import PluginInstance, Plugin, Pipeline, UploadedFiles, Feed, ComputeResource
 
 # import networkx as nx
 ### for debugging
