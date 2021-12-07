@@ -1,4 +1,6 @@
-
+from plugininstances.client import ChrisClient
+import logging
+import json
 from rest_framework import generics
 from rest_framework import permissions
 from rest_framework.reverse import reverse
@@ -31,6 +33,8 @@ class PluginInstanceList(generics.ListCreateAPIView):
     queryset = Plugin.objects.all()
     permission_classes = (permissions.IsAuthenticated,)
 
+    logger = logging.getLogger(__name__)
+
     def create(self, request, *args, **kwargs):
         """
         Overriden to remove descriptors from the request that must take their default
@@ -43,8 +47,8 @@ class PluginInstanceList(generics.ListCreateAPIView):
 
     def perform_create(self, serializer):
         """
-        Overriden to associate an owner, a plugin and a previous plugin instance with 
-        the newly created plugin instance before first saving to the DB. All the plugin 
+        Overriden to associate an owner, a plugin and a previous plugin instance with
+        the newly created plugin instance before first saving to the DB. All the plugin
         instance's parameters in the request are also properly saved to the DB. Finally
         the plugin's app is run with the provided plugin instance's parameters.
         """
@@ -80,7 +84,39 @@ class PluginInstanceList(generics.ListCreateAPIView):
         # if no validation errors at this point then save to the DB
         cr_data = serializer.validated_data.get('compute_resource')
         if cr_data:
-            compute_resource = plugin.compute_resources.get(name=cr_data['name'])
+            if cr_data['name'] == 'auto_free' or cr_data['name'] == 'auto_best':
+                plugin_name = serializer.validated_data.get('plugin_name')
+                self.logger.debug(type(cr_data['name']))
+                self.logger.debug("=========check name==========")
+                self.logger.debug(type(plugin))
+                self.logger.debug(plugin)
+                # self.logger.debug(plugin.name)
+                self.logger.debug("=========check title==========")
+                self.logger.debug(serializer.validated_data.get('title'))
+                # self.logger.debug(self.call_client(str(plugin)))
+                if cr_data['name'] == 'auto_best':
+                    compute_name, message = self.call_client(str(plugin), budget=1000000)
+                elif cr_data['name'] == 'auto_free':
+                    compute_name, message = self.call_client(str(plugin), budget=0)
+                self.logger.debug("=========check rec. compute env name==========")
+                self.logger.debug(compute_name)
+                if compute_name is None:
+                    error = ""
+                    message = json.loads(message)
+                    for cr in message:
+                        msg = " "
+                        key = cr.keys()
+                        for m in cr.values():
+                            msg = msg.join(m["message"])
+                        error = ''.join([error, f"{list(key)[0].upper()}: plugin requires: {msg}\n"])
+                    raise ValidationError(
+                        "No compute resources that match minimum plugin (%s) requirement\n %s" % (str(plugin), error))
+                self.logger.debug("=========requirement check passed==========")
+                self.logger.debug(f"Compute Resource Chosen: {compute_name}")
+                compute_resource = plugin.compute_resources.get(name=compute_name)
+                self.logger.debug("=========done==========")
+            else:
+                compute_resource = plugin.compute_resources.get(name=cr_data['name'])
         else:
             compute_resource = plugin.compute_resources.first()
         plg_inst = serializer.save(owner=user, plugin=plugin, previous=previous,
@@ -90,7 +126,7 @@ class PluginInstanceList(generics.ListCreateAPIView):
 
         if previous is None or previous.status == 'finishedSuccessfully':
             # schedule the plugin's app to run
-            plg_inst.status = 'scheduled'   # status changes to 'scheduled' right away
+            plg_inst.status = 'scheduled'  # status changes to 'scheduled' right away
             plg_inst.save()
             run_plugin_instance.delay(plg_inst.id)  # call async task
         elif previous.status in ('created', 'waiting', 'scheduled',
@@ -132,6 +168,30 @@ class PluginInstanceList(generics.ListCreateAPIView):
         plugin = self.get_object()
         return self.filter_queryset(plugin.instances.all())
 
+    def call_client(self, plugin_name, budget):
+
+        c = ChrisClient(
+            address='http://localhost:8000/api/v1/',
+            username='chris',
+            password='chris1234'
+        )
+        self.logger.debug("=======(log) call_client ========")
+        self.logger.debug(plugin_name)
+        self.logger.debug(type(c))
+        # print(plugin.parameters.all())
+
+        match_dict, check, message, pass_list = c.check_plugin_compute_env(plugin_name, summary=True)
+        self.logger.debug("=======call_client : returning from req check========")
+        # self.logger.debug(match_dict)
+        self.logger.debug(check)
+        self.logger.debug(message)
+        self.logger.debug(pass_list)
+        if check == False:
+            return None, str(message)
+        compute_env = c.get_rec_compute_env(plugin_name, pass_list, budget=budget)
+        # message = match_dict['']
+        return compute_env, str(message)
+
 
 class AllPluginInstanceList(generics.ListAPIView):
     """
@@ -165,7 +225,7 @@ class AllPluginInstanceListQuerySearch(generics.ListAPIView):
     permission_classes = (permissions.IsAuthenticated,)
     filterset_class = PluginInstanceFilter
 
-        
+
 class PluginInstanceDetail(generics.RetrieveUpdateDestroyAPIView):
     """
     A plugin instance view.
@@ -367,9 +427,9 @@ class PluginInstanceFileList(generics.ListAPIView):
         instance = self.get_object()
         feed = instance.feed
         links = {'feed': reverse('feed-detail', request=request,
-                             kwargs={"pk": feed.id}),
+                                 kwargs={"pk": feed.id}),
                  'plugin_inst': reverse('plugininstance-detail', request=request,
-                                                 kwargs={"pk": instance.id})}
+                                        kwargs={"pk": instance.id})}
         return services.append_collection_links(response, links)
 
     def get_files_queryset(self):
@@ -492,7 +552,7 @@ class StrParameterDetail(generics.RetrieveAPIView):
     serializer_class = PARAMETER_SERIALIZERS['string']
     queryset = StrParameter.objects.all()
     permission_classes = (permissions.IsAuthenticated,)
-    
+
 
 class IntParameterDetail(generics.RetrieveAPIView):
     """
@@ -512,7 +572,7 @@ class FloatParameterDetail(generics.RetrieveAPIView):
     serializer_class = PARAMETER_SERIALIZERS['float']
     queryset = FloatParameter.objects.all()
     permission_classes = (permissions.IsAuthenticated,)
-    
+
 
 class BoolParameterDetail(generics.RetrieveAPIView):
     """

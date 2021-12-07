@@ -1,5 +1,5 @@
 from click.decorators import argument
-from .client import ChrisClient, PluginNotFoundError
+from .client import ChrisClient, PluginNotFoundError, PipelineNotFoundError
 import click
 import json
 
@@ -97,7 +97,7 @@ def check_plugin_compute_env(context, plugin_name):
     Check whether the compute env is suitable for plugin.
     Pass in plugin_name
     Output: for each available compute env, output True/False indicating whether compute env satisfy the plugin requirement.\n
-    If False, also output the failure reason
+    If False, also output the failure reason\n
     Example: \n
     \t$ chrisclient check_plugin_compute_env pl-simplefsapp
     '''
@@ -106,6 +106,41 @@ def check_plugin_compute_env(context, plugin_name):
         json_print(client.check_plugin_compute_env(plugin_name))
     except PluginNotFoundError:
         print('No plugin found with that name.')
+
+@main.command('check_pipeline_compute_env')
+@click.pass_context
+@click.option('--id', '--pipeline_id', default=None, help='Do requiremnet checking on the pipeline identified by pipeline id.')
+@click.option('--name', '--pipeline_name', default=None, help='Do requiremnet checking on the pipeline identified by pipeline name.')
+def check_pipeline_compute_env(context, id, name):
+    '''
+    Check whether the compute env is suitable for all plugin in the pipeline.
+    Pass in pipeline_id or pipeline_name
+    Output: for each available compute env, output True/False indicating whether compute env satisfy the plugin requirement.\n
+    If False, also output the failure reason\n
+    Example: \n
+    \t$ chrisclient check_pipeline_compute_env pl-simplefsapp
+    '''
+    client = context.obj['client']
+    if id is not None:
+        try:
+                pipeline_id = int(id)
+        except ValueError:
+            print('Invalid pipeline id.')
+            exit(-1)
+        try:
+            json_print(client.check_pipeline_compute_env(pipeline_id=pipeline_id))
+        except PipelineNotFoundError:
+            print('No pipeline found with that ID.')
+    elif name is not None:
+        plugin_name = name
+        try:
+            json_print(client.check_pipeline_compute_env(pipeline_id=client.pipeline_name_to_id(plugin_name)))
+        except PipelineNotFoundError:
+            print('No pipeline found with that name.')
+    else:
+        print("Invalid argument. Specify '--id' or '--plugin_id' or '--name', '--plugin_name'")
+        exit(-1)
+
 
 @main.command('list_installed_plugins')
 @click.pass_context
@@ -179,6 +214,18 @@ def list_all_pipelines(context):
     client = context.obj['client']
     json_print(client.list_all_pipelines())
     
+@main.command('test')
+@click.pass_context
+@click.argument('pipeline_name')
+def test(context,pipeline_name):
+    '''
+    test
+    '''
+    client = context.obj['client']
+    print('pipeline_name: ', pipeline_name)
+    print(client.pipeline_name_to_id(pipeline_name))
+    # print(client.get_pipeline(pipeline_name))
+    # json_print()
 
 def json_print(obj):
     print(json.dumps(obj, sort_keys=False, indent=4))
@@ -187,4 +234,3 @@ def json_print(obj):
 if __name__ == '__main__':
     main()
 
-    # main()
