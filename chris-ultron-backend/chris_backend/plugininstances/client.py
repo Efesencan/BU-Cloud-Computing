@@ -301,7 +301,7 @@ class ChrisClient:
             fail_count = 0
             if cmp_cpu < min_cpu_limit:
                 fail_count = fail_count + 1
-                message = f"{str(min_cpu_limit)} CPU's, but {str(cmp_cpu)} CPUs available."
+                message = f"{str(min_cpu_limit)} milli-core CPU's, but {str(cmp_cpu)} milli-core CPUs available."
                 if resource['name'] == prev_resource:
                     match_list[resource_count][resource['name']]['message'].append(message)
                 else:
@@ -309,7 +309,7 @@ class ChrisClient:
                     prev_resource = resource['name']
             if cmp_gpu < min_gpu_limit:
                 fail_count = fail_count + 1
-                message = f"{str(min_gpu_limit)} GPU's, but {str(cmp_gpu)} GPUs available."
+                message = f"{str(min_gpu_limit)} milli-core GPU's, but {str(cmp_gpu)} milli-core GPUs available."
                 if resource['name'] == prev_resource:
                     match_list[resource_count][resource['name']]['message'].append(message)
                 else:
