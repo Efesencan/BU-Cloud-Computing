@@ -930,13 +930,13 @@ class ChrisClient:
 
         best_path_time = -1
         for i, env in enumerate(compute_resources):
-            if env['name'] not in ['auto', 'auto_free', 'auto_budget'] and env['name'] in passed_env_list:
+            if env['name'] not in ['auto_free', 'auto_best'] and env['name'] in passed_env_list:
                 expected_runtime = 1000  # this should be changed to input size
                 ### need to change how we calculate expected_runtime
                 if min_gpu_limit == 0:
-                    expected_runtime = (expected_runtime / (env['cpus']*env['cpu_clock_speed_ghz'] + 0.001)) + (min_memory_limit / env['memory'])
+                    expected_runtime = expected_runtime / (env['cpus']*env['cpu_clock_speed_ghz'] + 0.2 * ((env['memory']) / min_memory_limit) + 0.001)
                 else:
-                    expected_runtime = (expected_runtime / (env['cpus']*env['cpu_clock_speed_ghz'] + 0.001)) + (min_memory_limit / env['memory']) + (min_gpu_limit / env['gpus'])
+                    expected_runtime = expected_runtime / (env['cpus']*env['cpu_clock_speed_ghz'] + 0.2 * ((env['memory']) / min_memory_limit) + 0.1 * (env['gpus'] / min_gpu_limit)  + 0.001)
                     
                 ### get best time
                 if (expected_runtime < best_path_time or best_path_time == -1) and env['cost'] <= budget:
