@@ -583,7 +583,7 @@ class ChrisClient:
         pass_count = 0
         pass_list = []
         for resource in compute_resources:
-            if resource['name'] in ['auto', 'auto_free', 'auto_budget']:
+            if resource['name'] in ['auto_free', 'auto_best']:
                 # don't check against 'auto' option
                 continue
             cmp_cpu = resource['cpus']
@@ -922,7 +922,7 @@ class ChrisClient:
 
         best_path_time = -1
         for i, env in enumerate(compute_resources):
-            if env['name'] not in ['auto', 'auto_free', 'auto_budget'] and env['name'] in passed_env_list:
+            if env['name'] not in ['auto_free', 'auto_best'] and env['name'] in passed_env_list:
                 expected_runtime = 1000  # this should be changed to input size
                 ### need to change how we calculate expected_runtime
                 expected_runtime = expected_runtime / (env['cpus']*env['cpu_clock_speed_ghz'] + 0.001)
