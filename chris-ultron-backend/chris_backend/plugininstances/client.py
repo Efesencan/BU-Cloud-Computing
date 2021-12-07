@@ -928,7 +928,7 @@ class ChrisClient:
                 expected_runtime = expected_runtime / (env['cpus'] + 0.001)
 
                 ### get best time
-                if (expected_runtime < best_path_time and env['cost'] <= budget) or best_path_time == -1:
+                if (expected_runtime < best_path_time or best_path_time == -1) and env['cost'] <= budget:
                     best_path_time = expected_runtime
                     best_env = env['name']
 
