@@ -84,7 +84,7 @@ class PluginInstanceList(generics.ListCreateAPIView):
         # if no validation errors at this point then save to the DB
         cr_data = serializer.validated_data.get('compute_resource')
         if cr_data:
-            if cr_data['name'] == 'auto_free' or cr_data['name'] == 'auto_best' :
+            if cr_data['name'] == 'auto_free' or cr_data['name'] == 'auto_best':
                 plugin_name = serializer.validated_data.get('plugin_name')
                 self.logger.debug(type(cr_data['name']))
                 self.logger.debug("=========check name==========")
@@ -95,9 +95,9 @@ class PluginInstanceList(generics.ListCreateAPIView):
                 self.logger.debug(serializer.validated_data.get('title'))
                 # self.logger.debug(self.call_client(str(plugin)))
                 if cr_data['name'] == 'auto_best':
-                  compute_name, message = self.call_client(str(plugin), budget=1000000)
+                    compute_name, message = self.call_client(str(plugin), budget=1000000)
                 elif cr_data['name'] == 'auto_free':
-                  compute_name, message = self.call_client(str(plugin), budget=0)
+                    compute_name, message = self.call_client(str(plugin), budget=0)
                 self.logger.debug("=========check rec. compute env name==========")
                 self.logger.debug(compute_name)
                 if compute_name is None:
@@ -109,7 +109,8 @@ class PluginInstanceList(generics.ListCreateAPIView):
                         for m in cr.values():
                             msg = msg.join(m["message"])
                         error = ''.join([error, f"{list(key)[0].upper()}: plugin requires: {msg}\n"])
-                    raise ValidationError("No compute resources that match minimum plugin (%s) requirement\n %s" % (str(plugin), error))
+                    raise ValidationError(
+                        "No compute resources that match minimum plugin (%s) requirement\n %s" % (str(plugin), error))
                 self.logger.debug("=========requirement check passed==========")
                 compute_resource = plugin.compute_resources.get(name=compute_name)
             else:
@@ -123,7 +124,7 @@ class PluginInstanceList(generics.ListCreateAPIView):
 
         if previous is None or previous.status == 'finishedSuccessfully':
             # schedule the plugin's app to run
-            plg_inst.status = 'scheduled'   # status changes to 'scheduled' right away
+            plg_inst.status = 'scheduled'  # status changes to 'scheduled' right away
             plg_inst.save()
             run_plugin_instance.delay(plg_inst.id)  # call async task
         elif previous.status in ('created', 'waiting', 'scheduled',
@@ -185,10 +186,9 @@ class PluginInstanceList(generics.ListCreateAPIView):
         self.logger.debug(pass_list)
         if check == False:
             return None, str(message)
-        compute_env = c.get_rec_compute_env(plugin_name, pass_list, budget)
+        compute_env = c.get_rec_compute_env(plugin_name, pass_list, budget=budget)
         # message = match_dict['']
         return compute_env, str(message)
-        
 
 
 class AllPluginInstanceList(generics.ListAPIView):
@@ -223,7 +223,7 @@ class AllPluginInstanceListQuerySearch(generics.ListAPIView):
     permission_classes = (permissions.IsAuthenticated,)
     filterset_class = PluginInstanceFilter
 
-        
+
 class PluginInstanceDetail(generics.RetrieveUpdateDestroyAPIView):
     """
     A plugin instance view.
@@ -425,9 +425,9 @@ class PluginInstanceFileList(generics.ListAPIView):
         instance = self.get_object()
         feed = instance.feed
         links = {'feed': reverse('feed-detail', request=request,
-                             kwargs={"pk": feed.id}),
+                                 kwargs={"pk": feed.id}),
                  'plugin_inst': reverse('plugininstance-detail', request=request,
-                                                 kwargs={"pk": instance.id})}
+                                        kwargs={"pk": instance.id})}
         return services.append_collection_links(response, links)
 
     def get_files_queryset(self):
@@ -550,7 +550,7 @@ class StrParameterDetail(generics.RetrieveAPIView):
     serializer_class = PARAMETER_SERIALIZERS['string']
     queryset = StrParameter.objects.all()
     permission_classes = (permissions.IsAuthenticated,)
-    
+
 
 class IntParameterDetail(generics.RetrieveAPIView):
     """
@@ -570,7 +570,7 @@ class FloatParameterDetail(generics.RetrieveAPIView):
     serializer_class = PARAMETER_SERIALIZERS['float']
     queryset = FloatParameter.objects.all()
     permission_classes = (permissions.IsAuthenticated,)
-    
+
 
 class BoolParameterDetail(generics.RetrieveAPIView):
     """
