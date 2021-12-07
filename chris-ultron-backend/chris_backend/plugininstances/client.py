@@ -9,6 +9,8 @@ from .cli_models import PluginInstance, Plugin, Pipeline, UploadedFiles, Feed, C
 # import networkx as nx
 ### for debugging
 import math
+
+
 class ChrisClientError(Exception):
     pass
 
@@ -242,7 +244,7 @@ class ChrisClient:
         # print(json.dumps(plugin_names, sort_keys=True, indent=4))
         return plugin_names
 
-    def get_plugin_details(self, plugin_id = None, plugin_name = None):
+    def get_plugin_details(self, plugin_id=None, plugin_name=None):
         res = self._s.get(self.search_addr_plugins)
         res.raise_for_status()
         data = res.json()
@@ -263,11 +265,11 @@ class ChrisClient:
 
         if len(dict_plugin) == 0:
             raise PluginNotFoundError()
-        #print(json.dumps(dict_plugin, sort_keys=True, indent=4))
+        # print(json.dumps(dict_plugin, sort_keys=True, indent=4))
         return dict_plugin
-    
+
     def check_plugin_compute_env(self, plugin_name, summary=False):
-        plugin_details = self.get_plugin_details(plugin_name = plugin_name)
+        plugin_details = self.get_plugin_details(plugin_name=plugin_name)
         compute_addr = plugin_details[plugin_name]['compute_resources']
         min_cpu_limit = plugin_details[plugin_name]['min_cpu_limit']
         min_gpu_limit = plugin_details[plugin_name]['min_gpu_limit']
@@ -277,7 +279,7 @@ class ChrisClient:
         res = self._s.get(self.addr_compute_resources)
         res.raise_for_status()
         data = res.json()
-        #print(json.dumps(data, sort_keys=True, indent=4))
+        # print(json.dumps(data, sort_keys=True, indent=4))
         compute_resources = data['results']
         match_dict = {}
         match_list = []
@@ -334,7 +336,7 @@ class ChrisClient:
                 match_list.append({resource['name']: {'fit': True}})
                 pass_list.append(resource['name'])
             resource_count += 1
-            #else:
+            # else:
             #    match_list.append({resource['name']: {'fit': False, 'message': 'Not enough cpu'}})
         match_dict['matching'] = match_list
 
@@ -367,7 +369,7 @@ class ChrisClient:
         detail_list = []
         for plugin in plugin_list:
             # print(plugin['name'])
-            detail, pass_check = self.check_plugin_compute_env(plugin_name = plugin['name'], summary=True)
+            detail, pass_check = self.check_plugin_compute_env(plugin_name=plugin['name'], summary=True)
             ### total_pass will fail if only one of plugin fail to run
             detail_list.append(detail)
             if pass_check == False:
@@ -386,7 +388,7 @@ class ChrisClient:
     #     res = self._s.get(self.addr + 'pipelines/' + str(pipeline_id))
     #     res.raise_for_status()
     #     data = res.json()
-        
+
     #     ### get plugins topography from database
     #     res_topo = self._s.get(data['plugin_pipings'])
     #     res_topo.raise_for_status()
@@ -403,17 +405,17 @@ class ChrisClient:
     #             G.add_edge(previous_label, this_label)
     #     topolopy = list(nx.topological_sort(G)) ### list of node_id dictating which node come first
     #     plugin_id_topo = [identity_dict[k] for k in topolopy]
-        
+
 
     #     ### get list of plugins associated with that pipeline json object from database
     #     res = self._s.get(data['plugins'])
     #     res.raise_for_status()
     #     data = res.json()
-        
+
     #     plugin_list = data['results']
     #     # pp = pprint.PrettyPrinter(indent=4)
     #     # pp.pprint(data)
-        
+
     #     ### extract information from each plugins
     #     return_dict['status'] = 'OK'
     #     return_dict['plugin_list'] = []
@@ -496,7 +498,7 @@ class ChrisClient:
     #                 for j, env2 in enumerate(compute_resources):
     #                     ### DO REQUIREMENT CHECK HERE
     #                     ### if check fail don't add edge
-                        
+
     #                     G.add_edge(count+i, count+num_env+j, weight=env2['cost'])
     #                     pos[count+num_env+j] = (math.ceil(count/num_env)+1,j)
     #                     # print("edge: ", (count+i, count+num_env+j))
@@ -520,7 +522,7 @@ class ChrisClient:
     #     best_path = []
     #     ### for each path, calculate total expected runtime and total cost
     #     for path in nx.all_simple_paths(G, source=0, target=count):
-            
+
     #         # print(path[:-1])
     #         # get total expected time
     #         total_time = 0
@@ -554,121 +556,124 @@ class ChrisClient:
     #                 best_path_cost = total_cost
     #                 best_path = path
 
-            
-                    
+
+
     #     # print("best path:", best_path)
-   def check_plugin_compute_env(self, plugin_name, summary=False):
-        plugin_details = self.get_plugin_details(plugin_name = plugin_name)
-        compute_addr = plugin_details[plugin_name]['compute_resources']
-        min_cpu_limit = plugin_details[plugin_name]['min_cpu_limit']
-        min_gpu_limit = plugin_details[plugin_name]['min_gpu_limit']
-        min_memory_limit = plugin_details[plugin_name]['min_memory_limit']
-        min_number_of_workers = plugin_details[plugin_name]['min_number_of_workers']
 
-        res = self._s.get(self.addr_compute_resources)
-        res.raise_for_status()
-        data = res.json()
-        #print(json.dumps(data, sort_keys=True, indent=4))
-        compute_resources = data['results']
-        match_dict = {}
-        match_list = []
-        match_dict['plugin_name'] = plugin_name
 
-        resource_count = 0
-        prev_resource = ''
-        pass_count = 0
-        pass_list = []
-        for resource in compute_resources:
-            if resource['name'] in ['auto', 'auto_free', 'auto_budget']:
-                # don't check against 'auto' option
-                continue
-            cmp_cpu = resource['cpus']
-            cmp_gpu = resource['gpus']
-            cmp_cost = resource['cost']
-            cmp_mem = resource['memory']
-            cmp_worker = resource['workers']
-            fail_count = 0
-            if cmp_cpu < min_cpu_limit:
-                fail_count = fail_count + 1
-                message = f"{str(min_cpu_limit)} CPU's, but {str(cmp_cpu)} CPUs available."
-                if resource['name'] == prev_resource:
-                    match_list[resource_count][resource['name']]['message'].append(message)
-                else:
-                    match_list.append({resource['name']: {'fit': False, 'message': [message]}})
-                    prev_resource = resource['name']
-            if cmp_gpu < min_gpu_limit:
-                fail_count = fail_count + 1
-                message = f"{str(min_gpu_limit)} GPU's, but {str(cmp_gpu)} GPUs available."
-                if resource['name'] == prev_resource:
-                    match_list[resource_count][resource['name']]['message'].append(message)
-                else:
-                    match_list.append({resource['name']: {'fit': False, 'message': [message]}})
-                    prev_resource = resource['name']
-            if cmp_mem < min_memory_limit:
-                fail_count = fail_count + 1
-                message = f"{str(min_memory_limit)} MB's memory, but {str(cmp_mem)} MB's available."
-                if resource['name'] == prev_resource:
-                    match_list[resource_count][resource['name']]['message'].append(message)
-                else:
-                    match_list.append({resource['name']: {'fit': False, 'message': [message]}})
-                    prev_resource = resource['name']
-            if cmp_worker < min_number_of_workers:
-                fail_count = fail_count + 1
-                message = f"{str(min_number_of_workers)} workers, but only {str(cmp_worker)} workers available."
-                if resource['name'] == prev_resource:
-                    match_list[resource_count][resource['name']]['message'].append(message)
-                else:
-                    match_list.append({resource['name']: {'fit': False, 'message': [message]}})
-                    prev_resource = resource['name']
-            if cmp_cpu >= min_cpu_limit and cmp_gpu >= min_gpu_limit and cmp_mem >= min_memory_limit and cmp_worker >= min_number_of_workers:
-                pass_count = pass_count + 1
-                match_list.append({resource['name']: {'fit': True}})
-                pass_list.append(resource['name'])
-            resource_count += 1
-            #else:
-            #    match_list.append({resource['name']: {'fit': False, 'message': 'Not enough cpu'}})
-        match_dict['matching'] = match_list
+def check_plugin_compute_env(self, plugin_name, summary=False):
+    plugin_details = self.get_plugin_details(plugin_name=plugin_name)
+    compute_addr = plugin_details[plugin_name]['compute_resources']
+    min_cpu_limit = plugin_details[plugin_name]['min_cpu_limit']
+    min_gpu_limit = plugin_details[plugin_name]['min_gpu_limit']
+    min_memory_limit = plugin_details[plugin_name]['min_memory_limit']
+    min_number_of_workers = plugin_details[plugin_name]['min_number_of_workers']
 
-        # print(json.dumps(match_dict, sort_keys=True, indent=4))
-        # print("building message")
-        message = ""
-        # print(json.dumps(compute_resources, sort_keys=True, indent=4))
-        if summary == True:
-            # for index, resource in enumerate(compute_resources):
-            #     print("message = %s" %  match_list[index][resource['name']]['message'])
-            #     # message = message + "%s : %s\n" % (resource, match_list[index][resource['name']]['message'])
-            #     print("index = %s" %  index)
-            # message = match_dict['matching']
-            message = json.dumps(match_dict['matching'], sort_keys=True, indent=4)
-            return match_dict, (pass_count > 0), message, pass_list
-        return match_dict
+    res = self._s.get(self.addr_compute_resources)
+    res.raise_for_status()
+    data = res.json()
+    # print(json.dumps(data, sort_keys=True, indent=4))
+    compute_resources = data['results']
+    match_dict = {}
+    match_list = []
+    match_dict['plugin_name'] = plugin_name
 
-    def check_pipeline_compute_env(self, pipeline_id, env_list=None):
-        res = self._s.get(self.addr + 'pipelines/' + str(pipeline_id))
-        res.raise_for_status()
-        data = res.json()
+    resource_count = 0
+    prev_resource = ''
+    pass_count = 0
+    pass_list = []
+    for resource in compute_resources:
+        if resource['name'] in ['auto', 'auto_free', 'auto_budget']:
+            # don't check against 'auto' option
+            continue
+        cmp_cpu = resource['cpus']
+        cmp_gpu = resource['gpus']
+        cmp_cost = resource['cost']
+        cmp_mem = resource['memory']
+        cmp_worker = resource['workers']
+        fail_count = 0
+        if cmp_cpu < min_cpu_limit:
+            fail_count = fail_count + 1
+            message = f"{str(min_cpu_limit)} CPU's, but {str(cmp_cpu)} CPUs available."
+            if resource['name'] == prev_resource:
+                match_list[resource_count][resource['name']]['message'].append(message)
+            else:
+                match_list.append({resource['name']: {'fit': False, 'message': [message]}})
+                prev_resource = resource['name']
+        if cmp_gpu < min_gpu_limit:
+            fail_count = fail_count + 1
+            message = f"{str(min_gpu_limit)} GPU's, but {str(cmp_gpu)} GPUs available."
+            if resource['name'] == prev_resource:
+                match_list[resource_count][resource['name']]['message'].append(message)
+            else:
+                match_list.append({resource['name']: {'fit': False, 'message': [message]}})
+                prev_resource = resource['name']
+        if cmp_mem < min_memory_limit:
+            fail_count = fail_count + 1
+            message = f"{str(min_memory_limit)} MB's memory, but {str(cmp_mem)} MB's available."
+            if resource['name'] == prev_resource:
+                match_list[resource_count][resource['name']]['message'].append(message)
+            else:
+                match_list.append({resource['name']: {'fit': False, 'message': [message]}})
+                prev_resource = resource['name']
+        if cmp_worker < min_number_of_workers:
+            fail_count = fail_count + 1
+            message = f"{str(min_number_of_workers)} workers, but only {str(cmp_worker)} workers available."
+            if resource['name'] == prev_resource:
+                match_list[resource_count][resource['name']]['message'].append(message)
+            else:
+                match_list.append({resource['name']: {'fit': False, 'message': [message]}})
+                prev_resource = resource['name']
+        if cmp_cpu >= min_cpu_limit and cmp_gpu >= min_gpu_limit and cmp_mem >= min_memory_limit and cmp_worker >= min_number_of_workers:
+            pass_count = pass_count + 1
+            match_list.append({resource['name']: {'fit': True}})
+            pass_list.append(resource['name'])
+        resource_count += 1
+        # else:
+        #    match_list.append({resource['name']: {'fit': False, 'message': 'Not enough cpu'}})
+    match_dict['matching'] = match_list
 
-        res = self._s.get(data['plugins'])
-        res.raise_for_status()
-        data = res.json()
-        plugin_list = data['results']
-        return_dict = {}
-        total_pass = True
-        fail_plugin = []
-        detail_list = []
-        for plugin in plugin_list:
-            # print(plugin['name'])
-            detail, pass_check = self.check_plugin_compute_env(plugin_name = plugin['name'], summary=True)
-            ### total_pass will fail if only one of plugin fail to run
-            detail_list.append(detail)
-            if pass_check == False:
-                fail_plugin = detail["plugin_name"]
-            total_pass = total_pass and pass_check
+    # print(json.dumps(match_dict, sort_keys=True, indent=4))
+    # print("building message")
+    message = ""
+    # print(json.dumps(compute_resources, sort_keys=True, indent=4))
+    if summary == True:
+        # for index, resource in enumerate(compute_resources):
+        #     print("message = %s" %  match_list[index][resource['name']]['message'])
+        #     # message = message + "%s : %s\n" % (resource, match_list[index][resource['name']]['message'])
+        #     print("index = %s" %  index)
+        # message = match_dict['matching']
+        message = json.dumps(match_dict['matching'], sort_keys=True, indent=4)
+        return match_dict, (pass_count > 0), message, pass_list
+    return match_dict
 
-        return_dict["fit"] = total_pass
-        return_dict["fail case"] = fail_plugin
-        return_dict["details"] = detail_list
-        return return_dict
+
+def check_pipeline_compute_env(self, pipeline_id, env_list=None):
+    res = self._s.get(self.addr + 'pipelines/' + str(pipeline_id))
+    res.raise_for_status()
+    data = res.json()
+
+    res = self._s.get(data['plugins'])
+    res.raise_for_status()
+    data = res.json()
+    plugin_list = data['results']
+    return_dict = {}
+    total_pass = True
+    fail_plugin = []
+    detail_list = []
+    for plugin in plugin_list:
+        # print(plugin['name'])
+        detail, pass_check = self.check_plugin_compute_env(plugin_name=plugin['name'], summary=True)
+        ### total_pass will fail if only one of plugin fail to run
+        detail_list.append(detail)
+        if pass_check == False:
+            fail_plugin = detail["plugin_name"]
+        total_pass = total_pass and pass_check
+
+    return_dict["fit"] = total_pass
+    return_dict["fail case"] = fail_plugin
+    return_dict["details"] = detail_list
+    return return_dict
 
 
     # def get_pipeline_details(self, pipeline_id: int):
@@ -677,7 +682,7 @@ class ChrisClient:
     #     res = self._s.get(self.addr + 'pipelines/' + str(pipeline_id))
     #     res.raise_for_status()
     #     data = res.json()
-        
+
     #     ### get plugins topography from database
     #     res_topo = self._s.get(data['plugin_pipings'])
     #     res_topo.raise_for_status()
@@ -694,17 +699,17 @@ class ChrisClient:
     #             G.add_edge(previous_label, this_label)
     #     topolopy = list(nx.topological_sort(G)) ### list of node_id dictating which node come first
     #     plugin_id_topo = [identity_dict[k] for k in topolopy]
-        
+
 
     #     ### get list of plugins associated with that pipeline json object from database
     #     res = self._s.get(data['plugins'])
     #     res.raise_for_status()
     #     data = res.json()
-        
+
     #     plugin_list = data['results']
     #     # pp = pprint.PrettyPrinter(indent=4)
     #     # pp.pprint(data)
-        
+
     #     ### extract information from each plugins
     #     return_dict['status'] = 'OK'
     #     return_dict['plugin_list'] = []
@@ -787,7 +792,7 @@ class ChrisClient:
     #                 for j, env2 in enumerate(compute_resources):
     #                     ### DO REQUIREMENT CHECK HERE
     #                     ### if check fail don't add edge
-                        
+
     #                     G.add_edge(count+i, count+num_env+j, weight=env2['cost'])
     #                     pos[count+num_env+j] = (math.ceil(count/num_env)+1,j)
     #                     # print("edge: ", (count+i, count+num_env+j))
@@ -811,7 +816,7 @@ class ChrisClient:
     #     best_path = []
     #     ### for each path, calculate total expected runtime and total cost
     #     for path in nx.all_simple_paths(G, source=0, target=count):
-            
+
     #         # print(path[:-1])
     #         # get total expected time
     #         total_time = 0
@@ -845,8 +850,8 @@ class ChrisClient:
     #                 best_path_cost = total_cost
     #                 best_path = path
 
-            
-                    
+
+
     #     # print("best path:", best_path)
     #     ### chaging from path to which env
     #     env_path = []
@@ -875,53 +880,56 @@ class ChrisClient:
 
     #     return return_dict
 
-    def list_all_pipelines(self):
-        return_dict = {}
-        ### get pipeline json object from database
-        res = self._s.get(self.addr + 'pipelines')
-        res.raise_for_status()
-        data = res.json()
-        pipelines = data['results']
-        pipeline_names = {}
-        for pipeline in pipelines:
-            pipeline_name = pipeline['name']
-            pipeline_names[str(pipeline_name)] = pipeline
-        return pipeline_names
 
-    def pipeline_name_to_id(self, pipeline_name:str):
-        res = self._s.get(self.addr + 'pipelines')
-        res.raise_for_status()
-        data = res.json()
-        pipelines = data['results']
-        for pipeline in pipelines:
-            if pipeline_name == pipeline['name']:
-                return pipeline['id']
-        print("Cannot not convert pipeline_name to id")
-        exit(-1)
+def list_all_pipelines(self):
+    return_dict = {}
+    ### get pipeline json object from database
+    res = self._s.get(self.addr + 'pipelines')
+    res.raise_for_status()
+    data = res.json()
+    pipelines = data['results']
+    pipeline_names = {}
+    for pipeline in pipelines:
+        pipeline_name = pipeline['name']
+        pipeline_names[str(pipeline_name)] = pipeline
+    return pipeline_names
 
-    def get_rec_compute_env(self, plugin_name, passed_env_list, budget):
-        """
-            get plugin_name
 
-        """
-        ### TO DO
-        ### get all compute env cost
-        res = self._s.get(self.addr_compute_resources)
-        res.raise_for_status()
-        env_data = res.json()
-        cost_dict = {}
-        compute_resources = env_data['results']
+def pipeline_name_to_id(self, pipeline_name: str):
+    res = self._s.get(self.addr + 'pipelines')
+    res.raise_for_status()
+    data = res.json()
+    pipelines = data['results']
+    for pipeline in pipelines:
+        if pipeline_name == pipeline['name']:
+            return pipeline['id']
+    print("Cannot not convert pipeline_name to id")
+    exit(-1)
 
-        best_path_time = -1
-        for i, env in enumerate(compute_resources):
-            if env['name'] not in ['auto', 'auto_free', 'auto_budget'] and env['name'] in passed_env_list:
-                expected_runtime = 100 # this should be changed to input size
-                ### need to change how we calculate expected_runtime
-                expected_runtime = expected_runtime / (env['cpus']+0.001)
 
-                ### get best time
-                if (expected_runtime < best_path_time and env['cost'] <= budget) or best_path_time == -1:
-                    best_path_time = expected_runtime
-                    best_env = env['name']
-            
-        return best_env
+def get_rec_compute_env(self, plugin_name, passed_env_list, budget):
+    """
+        get plugin_name
+
+    """
+    ### TO DO
+    ### get all compute env cost
+    res = self._s.get(self.addr_compute_resources)
+    res.raise_for_status()
+    env_data = res.json()
+    cost_dict = {}
+    compute_resources = env_data['results']
+
+    best_path_time = -1
+    for i, env in enumerate(compute_resources):
+        if env['name'] not in ['auto', 'auto_free', 'auto_budget'] and env['name'] in passed_env_list:
+            expected_runtime = 100  # this should be changed to input size
+            ### need to change how we calculate expected_runtime
+            expected_runtime = expected_runtime / (env['cpus'] + 0.001)
+
+            ### get best time
+            if (expected_runtime < best_path_time and env['cost'] <= budget) or best_path_time == -1:
+                best_path_time = expected_runtime
+                best_env = env['name']
+
+    return best_env
