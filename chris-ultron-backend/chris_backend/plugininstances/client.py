@@ -920,12 +920,23 @@ class ChrisClient:
         cost_dict = {}
         compute_resources = env_data['results']
 
+        ### get plugin details
+        plugin_details = self.get_plugin_details(plugin_name=plugin_name)
+        compute_addr = plugin_details[plugin_name]['compute_resources']
+        min_cpu_limit = plugin_details[plugin_name]['min_cpu_limit']
+        min_gpu_limit = plugin_details[plugin_name]['min_gpu_limit']
+        min_memory_limit = plugin_details[plugin_name]['min_memory_limit']
+        min_number_of_workers = plugin_details[plugin_name]['min_number_of_workers']
+
         best_path_time = -1
         for i, env in enumerate(compute_resources):
             if env['name'] not in ['auto', 'auto_free', 'auto_budget'] and env['name'] in passed_env_list:
                 expected_runtime = 1000  # this should be changed to input size
                 ### need to change how we calculate expected_runtime
-                expected_runtime = expected_runtime / (env['cpus']*env['cpu_clock_speed_ghz'] + 0.001)
+                if min_gpu_limit == 0:
+                    expected_runtime = (expected_runtime / (env['cpus']*env['cpu_clock_speed_ghz'] + 0.001)) + (min_memory_limit / env['memory'])
+                else:
+                    expected_runtime = (expected_runtime / (env['cpus']*env['cpu_clock_speed_ghz'] + 0.001)) + (min_memory_limit / env['memory']) + (min_gpu_limit / env['gpus'])
                     
                 ### get best time
                 if (expected_runtime < best_path_time or best_path_time == -1) and env['cost'] <= budget:
