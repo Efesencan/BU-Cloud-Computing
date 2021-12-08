@@ -12,17 +12,22 @@
 * Gideon Pinto (gideon.pinto@childrens.harvard.edu)
 * Jennings Zhang (jennings.zhang@childrens.harvard.edu) 
 
-## Motivation behind the Project
-So what is the motivation behind the Chris and what is it important?
-ChRIS allows researchers to focus more on their analysis rather than thinking about the how to build the necessary compute architecture to achieve their analyses
-In addition to that, ChRIS enables running the complex data analysis on anywhere such as local workstation, local compute clusters and the cloud without requiring the technical knowledge
-Moreover, it generates the patient analytics data in a fast and anonymous way easing the job of doctors and medical researchers. 
+## What is ChRIS project?
+
+ChRIS (ChRIS Research Integration Service) ([ChRIS](http://chrisproject.org/)) is an active open source distributed data and computation framework, developed from inception as a platform to facilitate the execution of complex (research-focused) compute operations by nontechnical users. Its genesis arose from a realization that considerable programs of value exist in the research world and the observation that most (if not all) of these programs are rarely used by anyone other than the original authors. ChRIS, at its heart, is a platform that attempts to cross this divide. It has grown into a container-based scheduling system that uses various other container scheduler backends (such as Kubernetes, docker swarm, and Red Hat OpenShift). It's primarily designed to make the cloud computing accessible to non-technical users such as radiologist and other people in the medical domain so that they could get analytical reports of the patient data in a fast and easy way.
+
+## Motivation behind the Chris and why is it important?
+
+* ChRIS allows researchers to focus more on their **analysis** rather than thinking about the how to build the necessary compute architecture to achieve their analyses.
+* In addition to that, ChRIS enables running the complex data analysis on **anywhere** such as local workstation, local compute clusters and the cloud without requiring the technical knowledge
+* Moreover, it generates the patient analytics data in a **fast** and **anonymous** way easing the job of doctors and medical researchers. 
 
 ## 1. Vision and Goals Of The Project:
 
-ChRIS (ChRIS Research Integration Service) ([ChRIS](http://chrisproject.org/)) is an active open source project, developed from inception as a platform to facilitate the execution of complex (research-focused) compute operations by nontechnical users. Its genesis arose from a realization that considerable programs of value exist in the research world and the observation that most (if not all) of these programs are rarely used by anyone other than the original authors. ChRIS, at its heart, is a platform that attempts to cross this divide. It has grown into a container-based scheduling system that uses various other container scheduler backends (such as Kubernetes, docker swarm, and Red Hat OpenShift).
+Plug-ins for ChRIS are primarily written in Python programming language along with operational parameters like the minimum number of GPUs, CPU, or RAM that are baked into the code. These plugin requirements are spesificed by the plugin developer and each plugin may have different computational requirements. But currently, the ChRIS system does not have the ability to check whether a certain plugin can be run on a selected compute environment. As a result, plugins may fail to run if their assigned compute environment does not satisfy its minimum requirements. Moreover, all the plugins that require the output of that failed plugin will also fail to run. The second problem in the ChRIS system is that, there is no automated way for assigning compute resources to plugins. However, in the ideal case, users should not bothered to choose the optimal way of assigning compute resources to their plugins. Becasue they may not know the answer of what is the best compute environment to run their analysis in a fastest way, or which computer resources should they use i they have x amount of budget in terms of US dollars? The third problem is that, the ChRIS system does not have descriptive fields in the database to define the specifications of the compute environment. Therefore, there is no information about the computational capacity of a compute resource inside the ChRIS backend.
 
-Plug-ins for ChRIS are primarily written in Python with operational parameters like the number of GPUs, CPU, or RAM baked into the code that the developer writes. Our goal for this project is to:
+
+Our goal for this project is to:
  * Develop a command-line application for the end-user to:
    *  determine the compute resource best fit for a plug-in based on two optimization functions: speed and monetary cost
    *  view the plug-in/pipeline's operational parameters/compute resources
