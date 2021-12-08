@@ -19,25 +19,26 @@ ChRIS (ChRIS Research Integration Service) ([ChRIS](http://chrisproject.org/)) i
 ## Motivation behind the Chris and why is it important?
 
 * ChRIS allows researchers to focus more on their **analysis** rather than thinking about how to build the necessary compute architecture to achieve their analyses.
-* In addition to that, ChRIS enables running the complex data analysis on **anywhere** such as local workstation, local compute clusters and the cloud without requiring the technical knowledge
+* In addition to that, ChRIS enables running the complex data analysis on **anywhere** such as local workstation, local compute clusters and the cloud without requiring the technical knowledge.
 * Moreover, it generates the patient analytics data in a **fast** and **anonymous** way easing the job of doctors and medical researchers. 
 
 ## 1. Vision and Goals Of The Project:
 
-Plug-ins for ChRIS are primarily written in Python programming language along with operational parameters like the minimum number of GPUs, CPU, or RAM that are baked into the code. These plugin requirements are spesificed by the plugin developer and each plugin may have different computational requirements. But currently, the ChRIS system does not have the ability to check whether a certain plugin can be run on a selected compute environment. As a result, plugins may fail to run if their assigned compute environment does not satisfy its minimum requirements. Moreover, all the plugins that require the output of that failed plugin will also fail to run. The second problem in the ChRIS system is that, there is no automated way for assigning compute resources to plugins. However, in the ideal case, users should not bothered to choose the optimal way of assigning compute resources to their plugins. Becasue they may not know the answer of what is the best compute environment to run their analysis in a fastest way, or which computer resources should they use i they have x amount of budget in terms of US dollars? The third problem is that, the ChRIS system does not have descriptive fields in the database to define the specifications of the compute environment. Therefore, there is no information about the computational capacity of a compute resource inside the ChRIS backend.
-
+Plug-ins for ChRIS are primarily written in Python programming language along with operational parameters like the minimum number of GPUs, CPU, or RAM that are baked into the code. These plugin requirements are spesificed by the plugin developer and each plugin may have different computational requirements. But currently, the ChRIS system does not have the ability to **check** whether a certain plugin can be run on a selected compute environment. As a result, plugins may **fail** to run if their assigned compute environment does not satisfy its minimum requirements. Moreover, all the plugins that require the output of that failed plugin will also fail to run. The second problem in the ChRIS system is that, there is no automated way for **assigning** compute resources to plugins. However, in the ideal case, users should not bothered to choose the optimal way of assigning compute resources to their plugins. Becasue they may not know the answer of what is the best compute environment to run their analysis in a fastest way, or which computer resources should they use i they have x amount of budget in terms of US dollars? The third problem is that, the ChRIS system does not have descriptive fields in the database to define the specifications of the compute environment. Therefore, there is no information about the computational capacity of a compute resource inside the ChRIS backend.
 
 Our goal for this project is to:
- * Develop a command-line application for the end-user to:
-   *  determine the compute resource best fit for a plug-in based on two optimization functions: speed and monetary cost
-   *  view the plug-in/pipeline's operational parameters/compute resources
+ * Expand the fields of “compute environments” in database to include more fields that describe the characteristics of a compute environment.
+   * Ex fields: Total # of CPU,total # of GPU, CPU clock speed, # of workers, total amounf of memory, cost of that compute environment and etc.,   
+ * Develop a command-line interface application for the ChRIS admins and developers to:
+   *  determine the compute resource that best fits for a plug-in based on two optimization functions: speed and monetary cost
+   *  view the plug-in/pipeline's operational parameters/compute resources and their details
    *  optimize a pipeline for cost or speed and report the correct compute resources required
    *  enable users to determine whether the remote environment satisfies the spec of the computational requirements of the computing pipeline requested by the users
 
-
- * Integrate the functionality of the command-line application into the ChRIS backend
-   * Add a UI element to the web UI frontend (adding a compute resource called auto_free, etc.) to automatically choose a compute resource for a single plug-in
- 
+ * Integrate the functionality of the command-line application into the ChRIS backend so that it is also available to public (non-technical users, medical researchers, etc.)
+   * Add a UI element to the web UI frontend (adding a compute resource called auto_free, auto_best etc.) to automatically choose a compute resource for a single plug-in
+   * Display error message in the ChRIS UI when there is not any compute environment that satisfies the plugin requriements and return an error message explaining why is that the case.
+      * Ex message: The plugin required at least 200 MB's of memory, however the compute environment (ex. host) has only 100 MB available.    
 
 **Additional goals:**
 * Create a plug-in for Banu Ahtam of the FNNDSC to calculate "subject age at time of scan" in a spreadsheet.
@@ -48,7 +49,7 @@ This project targets:
 
  * doctors, medical researchers, and scientific researchers will use ChRIS via a Graphical User Interface to efficiently perform cloud-based containerized computation.
 
- * admins of ChRIS, who are going to test or use the pipeline for generating analytical reports
+ * admins of ChRIS, who are going to test or use the plugin for generating analytical reports
  
 For example, a doctor or radiologist can launch a workflow to analyze a set of MRI images of a patient, receive a technical report (like volume metric details of each part of the brain), and react accordingly.
 
@@ -67,8 +68,6 @@ For example, a doctor or radiologist can launch a workflow to analyze a set of M
     
     * For a given plug-in (a created/written app that is containerized) and for a computing environment in which the plug-in is intended to run, check whether the resources are sufficient for the plug-in's requirements.
 
-    * Given a registered pipeline, check whether all plug-ins in said pipeline are able to be executed in the selected compute environment.
-
     * For a collection of plug-ins in a registered pipeline and a given cost function (i.e., "speed," "monetary cost"), recommend each plug-in to the compute environment that satisfies its requirements.
 
     * View the number of GPUs, CPUs, or RAM of the compute resource directly in the ChRIS backend Django admin page.
@@ -76,7 +75,7 @@ For example, a doctor or radiologist can launch a workflow to analyze a set of M
     * Understand whether compute environment is sufficient or not to run the pipeline.
 
 * The descriptors for a compute resource should be visible in the ChRIS REST API.
-* The frontend should contain an "auto_free" (chooses the best compute resource with zero monetary cost) and "auto_best" (chooses the best compute resource with any monetary cost) compute environment that programmatically chooses the best environment for a plug-in.
+* The frontend should contain an option named "auto_free" (chooses the best compute resource with zero monetary cost) and "auto_best" (chooses the best compute resource with any monetary cost) compute environment which allows to chooses the best environment for a plug-in in a automated way.
 
 # Future Work:
 
