@@ -1,3 +1,4 @@
+# This branch was a prototype of the Flask microservice we were going to use for the project. Did not end up getting used.
 # Enabling Real-world Medical Compute Workflows on the Cloud (and others) to aid in Clinical Decision Making
 ## Team Members:
 * Efe Sencan (esencan@bu.edu)
