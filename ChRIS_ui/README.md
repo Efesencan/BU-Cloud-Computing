@@ -1,3 +1,5 @@
+# This branch just adds an auto button to the compute resource picker. Did not end up getting used in the project.
+
 # ![ChRIS logo](https://github.com/FNNDSC/ChRIS_ultron_backEnd/blob/master/docs/assets/logo_chris.png) ChRIS_ui
 
 ![License][license-badge]
