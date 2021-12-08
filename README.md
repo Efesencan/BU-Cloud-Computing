@@ -18,7 +18,7 @@ ChRIS (ChRIS Research Integration Service) ([ChRIS](http://chrisproject.org/)) i
 
 ## Motivation behind the Chris and why is it important?
 
-* ChRIS allows researchers to focus more on their **analysis** rather than thinking about the how to build the necessary compute architecture to achieve their analyses.
+* ChRIS allows researchers to focus more on their **analysis** rather than thinking about how to build the necessary compute architecture to achieve their analyses.
 * In addition to that, ChRIS enables running the complex data analysis on **anywhere** such as local workstation, local compute clusters and the cloud without requiring the technical knowledge
 * Moreover, it generates the patient analytics data in a **fast** and **anonymous** way easing the job of doctors and medical researchers. 
 
