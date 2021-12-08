@@ -12,20 +12,27 @@
 * Gideon Pinto (gideon.pinto@childrens.harvard.edu)
 * Jennings Zhang (jennings.zhang@childrens.harvard.edu) 
 
+## Motivation behind the Project
+So what is the motivation behind the Chris and what is it important?
+ChRIS allows researchers to focus more on their analysis rather than thinking about the how to build the necessary compute architecture to achieve their analyses
+In addition to that, ChRIS enables running the complex data analysis on anywhere such as local workstation, local compute clusters and the cloud without requiring the technical knowledge
+Moreover, it generates the patient analytics data in a fast and anonymous way easing the job of doctors and medical researchers. 
+
 ## 1. Vision and Goals Of The Project:
 
 ChRIS (ChRIS Research Integration Service) ([ChRIS](http://chrisproject.org/)) is an active open source project, developed from inception as a platform to facilitate the execution of complex (research-focused) compute operations by nontechnical users. Its genesis arose from a realization that considerable programs of value exist in the research world and the observation that most (if not all) of these programs are rarely used by anyone other than the original authors. ChRIS, at its heart, is a platform that attempts to cross this divide. It has grown into a container-based scheduling system that uses various other container scheduler backends (such as Kubernetes, docker swarm, and Red Hat OpenShift).
 
-Plug-ins for ChRIS are primarily written in Python with operational variables like the number of GPUs, CPU threads, or amount of RAM baked into the code that the developer writes. Our goal for this project is to:
+Plug-ins for ChRIS are primarily written in Python with operational parameters like the number of GPUs, CPU, or RAM baked into the code that the developer writes. Our goal for this project is to:
  * Develop a command-line application for the end-user to:
-   *  determine a compute resource's environment programmatically   
-   *  view the plug-in/pipeline's operational variables/compute resources from the front end
+   *  determine the compute resource best fit for a plug-in based on two optimization functions: speed and monetary cost
+   *  view the plug-in/pipeline's operational parameters/compute resources
    *  optimize a pipeline for cost or speed and report the correct compute resources required
+   *  enable users to determine whether the remote environment satisfies the spec of the computational requirements of the computing pipeline requested by the users
 
- * Add a UI element to ChRIS_ui to automatically choose a compute resource for a single plug-in
+
+ * Integrate the functionality of the command-line application into the ChRIS backend
+   * Add a UI element to the web UI frontend (adding a compute resource called auto_free, etc.) to automatically choose a compute resource for a single plug-in
  
-
-* Enable users to determine whether the remote environment satisfies the spec of the computational requirements of the computing pipeline requested by the users
 
 **Additional goals:**
 * Create a plug-in for Banu Ahtam of the FNNDSC to calculate "subject age at time of scan" in a spreadsheet.
@@ -34,83 +41,82 @@ Plug-ins for ChRIS are primarily written in Python with operational variables li
 
 This project targets:
 
- * Doctors, Medical researchers, and scientific researchers will use ChRIS via a Graphical User Interface to efficiently perform cloud-based containerized computation.
+ * doctors, medical researchers, and scientific researchers will use ChRIS via a Graphical User Interface to efficiently perform cloud-based containerized computation.
 
- * Admins of ChRIS, who are going to test or use the pipeline for generating analytical reports
+ * admins of ChRIS, who are going to test or use the pipeline for generating analytical reports
  
- * For example, a doctor or radiologist can launch a workflow to analyze a set of MRI images of a patient, receive a technical report (like volume metric details of each part of the brain), and react accordingly
+For example, a doctor or radiologist can launch a workflow to analyze a set of MRI images of a patient, receive a technical report (like volume metric details of each part of the brain), and react accordingly.
 
 ## 3. Scope and Features Of The Project:
 
 * Project Architecture:
     * ChRIS Project has three main components:
 
+        * ChRIS UI which is a web interface for user interaction and creating analyses
         * ChRIS Backend for passing input data into the computing environment and receiving results from the computing environment
         
         * ChRIS Store for storing the descriptor JSON representation of plug-ins requested by the user in the front end. The backend sends a request to the plug-in manager (p-man), which tells the computer resource to start an instance
 
-        * Containerized Plug-ins managed by OpenShift
-        
-        * Multiple Computing environments managed by OpenStack
 
 * By the end of this project, the users should be able to:
     
     * For a given plug-in (a created/written app that is containerized) and for a computing environment in which the plug-in is intended to run, check whether the resources are sufficient for the plug-in's requirements.
 
-    * Given a collection of plug-ins represented with graphs in ChRIS UI, check whether all plug-ins can be executed in the selected compute environment.
+    * Given a registered pipeline, check whether all plug-ins in said pipeline are able to be executed in the selected compute environment.
 
-    * For a collection of plug-ins in a graph, and a given cost function (i.e., "fastest," "cheapest"), assign each plug-in to the compute environment that satisfies the   requirements for that plug-in
+    * For a collection of plug-ins in a registered pipeline and a given cost function (i.e., "speed," "monetary cost"), recommend each plug-in to the compute environment that satisfies its requirements.
 
-    * View the number of GPUs, CPU threads, or RAM directly from the workflow creator within the ChRIS project front end.
+    * View the number of GPUs, CPUs, or RAM of the compute resource directly in the ChRIS backend Django admin page.
 
-    * Understand whether the space of the remote environment is sufficient or not to run the pipeline and generate analytical reports.
+    * Understand whether compute environment is sufficient or not to run the pipeline.
 
-* The command-line application should return a computing environment given the cost or speed function. 
+* The descriptors for a compute resource should be visible in the ChRIS REST API.
+* The frontend should contain an "auto_free" (chooses the best compute resource with zero monetary cost) and "auto_best" (chooses the best compute resource with any monetary cost) compute environment that programmatically chooses the best environment for a plug-in.
 
-* The backend should feed via the REST API, the descriptor for any compute resource.
-* The frontend should contain an "auto" compute environment that programmatically chooses the best environment for a plug-in.
+# Future Work:
 
-# Not Guaranteed:
+* Dynamic checking of remote compute resources for its capability.
 
-* Checking local computing resources for a list of computing nodes (iterative design);
+* Add an option to define the amount of monetary budget for a plug-in
+The current option we have are auto_free which is essentially a 0 budget and “auto_best” which is a infinite budget.
+So we want the user to define a budget somewhere between 0 and infinity.
 
-* Designing algorithms to create different computing resources allocation plans (e.g., Best Performance Plan and Cost-Effective Plan);
+* Add user defined priority weighting.
+For example, a user might want to focus more on number of CPUs or amount of memory.
 
-* Optimize allocation plans for different types of chipsets (e.g., Different resource allocation methods for Intel, NVIDIA, or AMD);
+* Extend our recommendation algorithm so that it covers the whole pipeline.
+
+* Update our recommendation algorithm so that it depends on previous runtimes of the plug-in.
+Instead of choosing the one with the most CPU, we can directly select the one with the lowest runtime
 
 
 ## 4. Solution Concept
 
 Global Architectural Structure:
 
-* User interface is written with the ReactJS framework to  display relevant information
-
 * A Python command-line application to fetch the current computing machine's hardware information from CUBE's REST API that can report:
-  * Any given pipeline's plug-ins
-  * Details of all compute resources, such as GPU, CPU, Cost, Memory
-  * A check for whether the pipeline's compute resources are compatible
-  * A way to optimize any pipeline for cost, or speed
-  * Return all information as JSON for future implementation
+  * any given pipeline's plug-ins
+  * details of all compute resources, such as GPU, CPU, Cost, Memory
+  * a check for whether the pipeline's compute resources are compatible with its plug-ins
+  * a way to optimize any pipeline for cost, or speed
+  * return all information as JSON for future implementation
 
-* Pass post-execution information from backend to the frontend
+* A frontend option, "auto_free" (chooses the best compute resource with zero monetary cost) and "auto_best" (chooses the best compute resource with any monetary cost) compute environment that programmatically chooses the best environment for a plug-in.
+  * Pass any errors from backend to the frontend
 
 Design Implication and Discussion:
 
-* ReactJS enables Cross-Platform Development, making the frontend more volatile and usable across different platforms;
-
-* ReactJS is also the frontend development environment of the ChRIS project. This makes our frontend more integrative to the main dashboard;
-
 * Python and Django are also intensively used in the ChRIS project backend. By using the same Django library, it is easier to maintain code.
 
-* Shell Scripting is a powerful tool in the Linux environment. Hardware information and processing allocations could be done by correctly using shell scripts.
+  * Python is a powerful tool in the Linux environment. Hardware information and processing allocations could be done by correctly using Python.
 
 ## 5. Acceptance criteria
 
-Minimum acceptance criteria are having an interface showing the details of the compute environment. Stretch goals are:
+Minimum viable product:
 
-* Having an interface showing the details of the environment
-
-* Access the plug-ins of environment specs from the backend via the REST API in an efficient way
+* Having a command line interface to show the details of the compute resource
+* Plug-in requirement checking for suitable compute resource
+* Access the plug-ins of environment specs from the backend via the REST API
 
 ## 6. Release Planning
 
@@ -135,7 +141,7 @@ Minimum acceptance criteria are having an interface showing the details of the c
 * Testing and prep for release
 
 ### Release 5 (by week 13): 
-* Integrate the client into the ChRIS Frontend
+* Integrate the client into the ChRIS backend
 
 ### Final Release (by week 15):
 * Deploy and release the product.
@@ -160,6 +166,17 @@ To bring up ChRIS Frontend: (Assuming that backend is running at http://localhos
 ```
 docker run --rm -d --name chris_ui -p 3000:3000 -e REACT_APP_CHRIS_UI_URL=http://localhost:8000/api/v1/ ghcr.io/fnndsc/chris_ui:latest
 ```
+Setup "auto_free" and "auto_best" compute environments:  
+1. Visit the ChRIS admin page
+```
+http://localhost:8000/chris-admin
+```
+2. Click "Compute Resources"
+3. Click "Add compute resource"
+4. In the Name field, type "auto_free", or "auto_best"
+5. The other parameters do not matter
+6. Save
+
 If you update chris-client and want to see the changes:
 - Make sure you are in the ./chris-client-cli:
 ```
