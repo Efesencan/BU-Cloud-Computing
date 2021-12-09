@@ -24,7 +24,7 @@ ChRIS (ChRIS Research Integration Service) ([ChRIS](http://chrisproject.org/)) i
 
 ## 1. Vision and Goals Of The Project:
 
-Plug-ins for ChRIS are primarily written in Python programming language along with operational parameters like the minimum number of GPUs, CPU, or RAM that are baked into the code. The plug-in developer specifies these plug-in requirements, and each plug-in may have different computational requirements. However, currently, the ChRIS system does not have the ability to **check** whether a particular plug-in can be run on a selected compute environment. As a result, plug-ins may **fail** to run if their assigned compute environment does not satisfy its minimum requirements. Moreover, all the plug-ins that require the output of that failed plug-in will also fail to run. The second problem in the ChRIS system is that there is no automated way for **assigning** compute resources to plug-ins. However, in the ideal case, users should not be bothered to choose the optimal way of assigning compute resources to their plug-ins because they may not know the answer of the best compute environment to run their analysis in the fastest way or based on their monetary budget. The third problem is that the ChRIS system does not have descriptive fields in the database to define the specifications of the compute environment. Therefore, there is no information about the computational capacity of a compute resource inside the ChRIS backend.
+Plug-ins for ChRIS are primarily written in Python programming language along with operational parameters like the minimum number of GPUs, CPU, or RAM that are baked into the code. The plug-in developer specifies these plug-in requirements, and each plug-in may have different computational requirements. However, currently, the ChRIS system does not have the ability to **check** whether a particular plug-in can be run on a selected compute environment. As a result, plug-ins may **fail** to run if their assigned compute environment does not satisfy its minimum requirements. Moreover, all the plug-ins that require the output of that failed plug-in will also fail to run. The second problem in the ChRIS system is that there is no automated way for **assigning** compute resources to plug-ins. However, in the ideal case, end-users should not be bothered to choose the optimal way of assigning compute resources to their plug-ins because they may not know the answer of the best compute environment to run their analysis in the fastest way or based on their monetary budget. The third problem is that the ChRIS system does not have descriptive fields in the database to define the specifications of the compute environment. Therefore, there is no information about the computational capacity of a compute resource inside the ChRIS backend.
 
 Our goal for this project is to:
  * Expand the fields of "compute environments" in the database to include more fields that describe the characteristics of a compute environment.
@@ -33,7 +33,7 @@ Our goal for this project is to:
    *  determine the compute resource that best fits for a plug-in based on two optimization functions: speed and monetary cost
    *  view the plug-in/pipeline's operational parameters/compute resources and their details
    *  optimize a pipeline for cost or speed and report the correct compute resources required
-   *  enable users to determine whether the remote environment satisfies the spec of the computational requirements of the computing pipeline requested by the users
+   *  enable ChRIS admin's to determine whether the remote environment satisfies the spec of the computational requirements of the computing pipelines that may be requested by end-users
 
  * Integrate the functionality of the command-line application into the ChRIS backend so that it is also available to the public (non-technical users, medical researchers, etc.)
    * Add a UI element to the web UI frontend (adding a compute resource called auto_free, auto_best, etc.) to automatically choose a compute resource for a single plug-in
@@ -47,9 +47,11 @@ Our goal for this project is to:
 
 This project targets:
 
- * doctors, medical researchers, and scientific researchers will use ChRIS via a Graphical User Interface to efficiently perform cloud-based containerized computation.
+ * doctors, medical researchers, and scientific researchers who will use ChRIS via a Graphical User Interface to efficiently perform cloud-based containerized computation.
+    * These users will use the web frontend elements ("auto_free"/"auto_best") to quickly choose a compute resource for a plugin.  
 
  * admins of ChRIS, who are going to test or use the plug-in for generating analytical reports
+    * These admins are also able to use the web frontend elements. However, the admins can also use the command line program to run tests and perform actions like listing plugins, and checking whether compute resources are compatible with a plug-in.
  
 For example, a doctor or radiologist can launch a workflow to analyze a set of MRI images of a patient, receive a technical report (like volume metric details of each part of the brain), and react accordingly.
 
@@ -83,7 +85,7 @@ For example, a doctor or radiologist can launch a workflow to analyze a set of M
 
 * Add an option to define the amount of monetary budget for a plug-in. 
 The current options we have are auto_free, essentially a 0 budget, and "auto_best," which is an infinite budget.
-So we want the user to define a budget somewhere between 0 and infinity.
+So we want the end-user to define a budget somewhere between 0 and infinity.
 
 * Add user-defined priority weighting.
 For example, a user might want to focus more on the number of CPUs or memory. However, we currently have a fixed formulation for selecting the best compute environment for a plug-in. 
@@ -128,7 +130,7 @@ Minimum viable product:
 
 ### Release 2 (by week 7): 
 * Start / continue exploring React JS
-* Understand the ChRIS system and devise a solution to "discover" the specs of container that user intends to run their work on (check the plug-in's requirements)
+* Understand the ChRIS system and devise a solution to "discover" the specs of container that end-user intends to run their work on (check the plug-in's requirements)
 * Start writing basic API that interacts with the app's plug-in requirements
 
 ### Release 3 (by week 9): 
