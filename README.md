@@ -16,7 +16,7 @@
 
 ChRIS (ChRIS Research Integration Service) ([ChRIS](http://chrisproject.org/)) is an active open-source distributed data and computation framework, developed from inception as a platform to facilitate the execution of complex (research-focused) compute operations by non-technical users. Its genesis arose from a realization that considerable programs of value exist in the research world and the observation that most (if not all) of these programs are rarely used by anyone other than the original authors. ChRIS, at its heart, is a platform that attempts to cross this divide. It has grown into a container-based scheduling system that uses various other container scheduler backends (such as Kubernetes, docker swarm, and Red Hat OpenShift). It is primarily designed to make cloud computing accessible to non-technical users such as radiologists and other people in the medical domain to get analytical reports of the patient data in a fast and easy way.
 
-## Motivation behind ChRIS and why is it important?
+## Motivation behind ChRIS and why it is important:
 
 * ChRIS allows researchers to focus more on their **analysis** rather than thinking about how to build the necessary compute architecture to achieve their analyses.
 * In addition, ChRIS enables running the complex data analysis on **anywhere** such as a local workstation, local compute clusters, and the Cloud without requiring the technical knowledge.
@@ -38,7 +38,7 @@ Our goal for this project is to:
  * Integrate the functionality of the command-line application into the ChRIS backend so that it is also available to the public (non-technical users, medical researchers, etc.)
    * Add a UI element to the web UI frontend (adding a compute resource called auto_free, auto_best, etc.) to automatically choose a compute resource for a single plug-in
    * Display error message in the ChRIS UI when there is no compute environment that satisfies the plug-in requirements and return an error message explaining why that is the case.
-      * Ex message: The plug-in required at least 200 MB of memory; however, the compute environment (ex. host) has only 100 MB available.    
+      * Example error message: The plug-in required at least 200 MB of memory; however, the compute environment (ex. host) has only 100 MB available.    
 
 **Additional goals:**
 * Create a plug-in for Banu Ahtam of the FNNDSC to calculate "subject age at time of scan" in a spreadsheet.
